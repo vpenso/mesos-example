@@ -1,0 +1,35 @@
+
+# Marathon 
+
+Mesos framework designed to launch **long-running applications** (services).
+
+* Replaces the traditional init-system in a **clustered** environment
+* Adds scaling and self-healing capabilities (high-availability, health checks)
+
+## Application
+
+* Typically a long-running service with instances on multiple nodes
+* Application instances are called **task**
+* The **application definition** describes the task setup and configuration
+
+<http://mesosphere.github.io/marathon/docs/application-basics.html>
+
+## REST API
+
+<https://mesosphere.github.io/marathon/api-console/index.html>
+
+```bash
+# example appls in this repo
+ls -1 $MESOS_EXAMPLE/var/marathon/apps
+# deploy an app
+curl -s $MARATHON_URL/v2/apps \
+     -X POST \
+     -H "Content-type: application/json" \
+     -d @$MESOS_EXAMPLE/var/marathon/apps/hello.json
+# list apps
+curl -s $MARATHON_URL/v2/apps | jq '.apps[].id'
+# list command executed by app
+curl -s $MARATHON_URL/v2/apps/<app-name> | jq '.app.cmd'
+# delete an app
+curl -s -X DELETE $MARATHON_URL/v2/apps/<app-name> | jq '.'
+```
