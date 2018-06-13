@@ -8,10 +8,12 @@ This example uses virtual machines setup with vm-tools:
 vm s centos7 lxdev01
 # login and configure manually 
 vm lo lxdev01 -r
-# open the Mesos web GUI 
+# open Mesos web GUI 
 $BROWSER http://$(vm ip lxdev01):5050
-# open the Marathon web GUI
+# open Marathon web GUI
 $BROWSER http://$(vm ip lxdev01):8080
+# open Chronos web GUI
+$BROWSER http://$(vm ip lxdev01):4400
 ```
 
 Configuration in the VM instance:
@@ -22,7 +24,7 @@ Configuration in the VM instance:
 rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
 # install packages
 yum -y install --enablerepo=mesosphere mesos docker mesosphere-zookeeper marathon chronos
-
+# use Docker as containerizer
 echo 'docker,mesos' > /etc/mesos-slave/containerizers
 # configure Marathon
 cat << EOF > /etc/default/marathon
