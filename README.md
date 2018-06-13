@@ -31,21 +31,21 @@ Frameworks (== pluggable schedulers):
   - Periodic (cron like) jobs, (i.e. Chronos, Jenkins)
   - Batch jobs (sequential/parallel)
 
-Containerization 
+### Containerization
 
-* pluggable architecture (extensible)
-  - image format
-  - network
-  - storage
-  - isolation
-  - lifecycle (hooks)
-  - nested containers
-  - provisioner (fetch/cache images)
-* **containerizer** (i.e. docker, cgroups/namespaces, appc, oci)
-  - between (mesos) agent and containers
-  - launch, update, destroy containers
-  - configures container isolation
-  - provides container stats and status
+* Pluggable architecture (extensible)
+  - Image format
+  - Network
+  - Storage
+  - Isolation
+  - Life-cycle (hooks)
+  - Nested containers
+  - Provisioner (fetch/cache images)
+* **Containerizer** (i.e. docker, cgroups/namespaces, appc, oci)
+  - Between (Mesos) agent and containers
+  - Launch, update, destroy containers
+  - Configures container isolation
+  - Provides container stats and status
 
 
 
