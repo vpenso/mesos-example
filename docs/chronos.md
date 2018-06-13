@@ -5,8 +5,10 @@ Chronos is a framework designed to run **periodic jobs**.
 <https://github.com/mesos/chronos>  
 <https://mesos.github.io/chronos/>
 
-* Schedule jobs with **repeating interval**
-* Tasks may have parent **dependencies**
+* Distributed and fault-tolerant
+* Supports bash and custom executor
+* Schedule jobs with **repeating interval** (ISO8601 notation)
+* Tasks may have **job dependencies**
 
 ## REST API
 
