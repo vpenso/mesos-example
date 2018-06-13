@@ -1,6 +1,20 @@
-Debian & CentOS packages are available at:
 
-<https://open.mesosphere.com/downloads/mesos/>
+This example uses virtual machines setup with vm-tools:
+
+<https://github.com/vpenso/vm-tools>
+
+```bash
+# start a CentOS 7 VM instance
+vm s centos7 lxdev01
+# login and configure manually 
+vm lo lxdev01 -r
+# open the Mesos web GUI 
+$BROWSER http://$(vm ip lxdev01):5050
+# open the Marathon web GUI
+$BROWSER http://$(vm ip lxdev01):8080
+```
+
+Configuration in the VM instance:
 
 ```bash
 ## -- CentOS --##

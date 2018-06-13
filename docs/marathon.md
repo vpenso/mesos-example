@@ -12,16 +12,17 @@ Mesos framework designed to launch **long-running applications** (services).
 * Application instances are called **task**
 * The **application definition** describes the task setup and configuration
 
-<http://mesosphere.github.io/marathon/docs/application-basics.html>
+```bash
+# example application definitions
+ls -1 $MESOS_EXAMPLE/var/marathon/apps
+```
 
 ## REST API
 
 <https://mesosphere.github.io/marathon/api-console/index.html>
 
 ```bash
-# example appls in this repo
-ls -1 $MESOS_EXAMPLE/var/marathon/apps
-# deploy an app
+# deploy app
 curl -s $MARATHON_URL/v2/apps \
      -X POST \
      -H "Content-type: application/json" \
