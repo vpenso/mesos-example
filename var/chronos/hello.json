@@ -1,5 +1,5 @@
 {
-  "schedule": "R10/2016-12-05T10:00:00Z/PT1M",
+  "schedule": "R10/2018-06-13T13:15:00Z/PT1M",
   "name": "hello",
   "epsilon": "PT15M",
   "command": "echo 'hello world' ; sleep 30",
