@@ -77,15 +77,29 @@ NODES=lxb00[1-4] vn ex 'yum -y install --enablerepo=mesosphere mesos docker'
 Configure ZooKeeper on the cluster:
 
 ```bash
-# configure the Zookeeper IDs on the masters
+# configure the node IDs
 for i in 1 2 3 ; do NODES=lxcc0$i vn ex "echo $i > /etc/zookeeper/conf/myid"; done
-# configure Zookeeper on the masters
-NODES=lxcc0[1-3] vn ex 'echo -n "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888\n" > /etc/zookeeper/conf/zoo.cfg
-# configure the Zookeeper server for all Mesos nodes
+# main configure file
+NODES=lxcc0[1-3] vn ex 'echo -n "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888\n" > /etc/zookeeper/conf/zoo.cfg'
+# configure the Zookeeper end-points for all Mesos nodes
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
 
 Configure the Mesos masters:
 
 ```bash
+# configure the Mesos quorum
+NODES=lxcc0[1-3] vn ex 'cat /etc/mesos-master/quorum'
+# configure the Mesos master IPs and hostnames
+vm ex lxcc01 -r 'echo 10.1.1.9 > /etc/mesos-master/ip'
+vm ex lxcc02 -r 'echo 10.1.1.10 > /etc/mesos-master/ip'
+vm ex lxcc03 -r 'echo 10.1.1.11 > /etc/mesos-master/ip'
+NODES=lxcc0[1-3] vn ex 'cp /etc/mesos-master/ip /etc/mesos-master/hostname'
+# configure Marathon
+NODES=lxcc0[1-3] vn ex '
+  mkdir -p /etc/marathon/conf
+  cp /etc/mesos-master/hostname /etc/marathon/conf
+  cp /etc/mesos/zk /etc/marathon/conf/master
+'
+NODES=lxcc0[1-3] vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" > /etc/marathon/conf/zk'
 ```
