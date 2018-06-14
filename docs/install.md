@@ -3,6 +3,8 @@ This example uses virtual machines setup with vm-tools:
 
 <https://github.com/vpenso/vm-tools>
 
+## Single Node
+
 ```bash
 # start a CentOS 7 VM instance
 vm s centos7 lxdev01
@@ -41,4 +43,36 @@ firewall-cmd --permanent --zone=public --add-port=5051/tcp # mesos-slave
 firewall-cmd --permanent --zone=public --add-port=8080/tcp # marathon
 firewall-cmd --permanent --zone=public --add-port=4400/tcp # chronos
 firewall-cmd --reload
+```
+
+## Small Cluster
+
+Provision all required virtual machine instances with vm-tools:
+
+```bash
+# list the VM instances
+>>> NODES
+lxcc0[1-3],lxb00[1-4]
+# start new VM instances using `centos7` as source image
+>>> vn s centos7
+# clean up everything to start from scratch
+>>> vn r
+```
+
+### Deployment
+
+Install required packages on all nodes
+
+```bash
+# configure the Mesosphere package repository on all nodes
+vn ex 'rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm'
+# install the master nodes
+NODES=lxcc0[1-3] vn ex 'yum -y install --enablerepo=mesosphere mesos marathon'
+# install the slave nodes
+NODES=lxb00[1-4] vn ex 'yum -y install --enablerepo=mesosphere mesos docker'
+```
+
+### Configuration
+
+```bash
 ```
