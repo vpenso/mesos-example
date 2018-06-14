@@ -68,6 +68,8 @@ vn ex '
         sysctl -w net.ipv6.conf.default.disable_ipv6=1
         rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         systemctl disable --now firewalld
+        # disable SELinux
+        setenforce 0 && sestatus
 
 '
 # configure the master nodes
