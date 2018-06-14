@@ -57,8 +57,6 @@ lxcc0[1-3],lxb00[1-4]
 >>> vn s centos7
 # clean up everything to start from scratch
 >>> vn r
-# configure the Mesosphere package repository on all nodes
-vn ex 'rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm'
 ```
 ### Configuration
 
@@ -67,7 +65,9 @@ Configure Mesos on all nodes:
 ```bash
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
+  rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
   yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
+  systemctl disable mesos-slave
   echo 2 > /etc/mesos-master/quorum
   hostname -i > /etc/mesos-master/ip
   cp /etc/mesos-master/ip /etc/mesos-master/hostname
@@ -78,11 +78,13 @@ NODES=lxcc0[1-3] vn ex '
 '
 # configure the slave nodes
 NODES=lxb00[1-4] vn ex '
+  rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
   yum -y install -q --enablerepo=mesosphere mesos docker
+  systemctl disable mesos-master
   hostname -i > /etc/mesos-slave/ip
   cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
   echo docker,mesos > /etc/mesos-slave/containerizers
-  tail -n+1 /etc/mesos-slave/ip,hostname,containerizers}
+  tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}
   firewall-cmd --permanent --zone=public --add-port=5051/tcp
   firewall-cmd --reload
 '
@@ -91,12 +93,18 @@ NODES=lxb00[1-4] vn ex '
 Configure ZooKeeper on the cluster:
 
 ```bash
-# configure the node IDs
-for i in 1 2 3 ; do NODES=lxcc0$i vn ex "echo $i > /etc/zookeeper/conf/myid"; done
-# main configure file
-NODES=lxcc0[1-3] vn ex '
-  echo -e "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888" >> /etc/zookeeper/conf/zoo.cfg
-'
+# configure the master nodes
+for i in 1 2 3
+do 
+        NODES=lxcc0$i vn ex "
+                echo $i > /etc/zookeeper/conf/myid
+                cat /etc/zookeeper/conf/myid
+                echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg 
+                echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
+                echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
+                grep server /etc/zookeeper/conf/zoo.cfg
+        "
+done
 # configure the Zookeeper end-points for all Mesos nodes
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
