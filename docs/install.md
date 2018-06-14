@@ -57,22 +57,34 @@ lxcc0[1-3],lxb00[1-4]
 >>> vn s centos7
 # clean up everything to start from scratch
 >>> vn r
-```
-
-### Deployment
-
-Install required packages on all nodes
-
-```bash
 # configure the Mesosphere package repository on all nodes
 vn ex 'rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm'
-# install the master nodes
-NODES=lxcc0[1-3] vn ex 'yum -y install --enablerepo=mesosphere mesos mesosphere-zookeeper marathon'
-# install the slave nodes
-NODES=lxb00[1-4] vn ex 'yum -y install --enablerepo=mesosphere mesos docker'
 ```
-
 ### Configuration
+
+Configure Mesos on all nodes:
+
+```bash
+# configure the master nodes
+NODES=lxcc0[1-3] vn ex '
+  yum -y install --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
+  echo 2 > /etc/mesos-master/quorum
+  hostname -i > /etc/mesos-master/ip
+  cp /etc/mesos-master/ip /etc/mesos-master/hostname
+  firewall-cmd --permanent --zone=public --add-port=5050/tcp
+  firewall-cmd --permanent --zone=public --add-port=8080/tcp
+  firewall-cmd --reload
+'
+# configure the slave nodes
+NODES=lxb00[1-4] vn ex '
+  yum -y install --enablerepo=mesosphere mesos docker
+  hostname -i > /etc/mesos-slave/ip
+  cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
+  echo docker,mesos > /etc/mesos-slave/containerizers
+  firewall-cmd --permanent --zone=public --add-port=5051/tcp
+  firewall-cmd --reload
+'
+```
 
 Configure ZooKeeper on the cluster:
 
@@ -87,27 +99,6 @@ NODES=lxcc0[1-3] vn ex '
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
 
-Configure Mesos on all nodes:
-
-```bash
-# configure the master nodes
-NODES=lxcc0[1-3] vn ex '
-  echo 2 > /etc/mesos-master/quorum
-  hostname -i > /etc/mesos-master/ip
-  cp /etc/mesos-master/ip /etc/mesos-master/hostname
-  firewall-cmd --permanent --zone=public --add-port=5050/tcp
-  firewall-cmd --permanent --zone=public --add-port=8080/tcp
-  firewall-cmd --reload
-'
-# configure the slave nodes
-NODES=lxb00[1-4] vn ex '
-  hostname -i > /etc/mesos-slave/ip
-  cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
-  echo docker,mesos > /etc/mesos-slave/containerizers
-  firewall-cmd --permanent --zone=public --add-port=5051/tcp
-  firewall-cmd --reload
-'
-```
 
 Configure Marathon:
 
