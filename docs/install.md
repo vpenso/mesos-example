@@ -63,11 +63,17 @@ lxcc0[1-3],lxb00[1-4]
 Configure Mesos on all nodes:
 
 ```bash
+vn ex '
+        sysctl -w net.ipv6.conf.all.disable_ipv6=1
+        sysctl -w net.ipv6.conf.default.disable_ipv6=1
+        rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
+        systemctl disable --now firewalld
+
+'
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
-        rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
-        systemctl disable --now mesos-slave firewalld
+        systemctl disable --now mesos-slave
         echo 2 > /etc/mesos-master/quorum
         hostname -i > /etc/mesos-master/ip
         cp /etc/mesos-master/ip /etc/mesos-master/hostname
@@ -76,7 +82,7 @@ NODES=lxcc0[1-3] vn ex '
 NODES=lxb00[1-4] vn ex '
         rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         yum -y install -q --enablerepo=mesosphere mesos docker
-        systemctl disable --now mesos-master firewalld
+        systemctl disable --now mesos-master
         hostname -i > /etc/mesos-slave/ip
         cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
         echo docker,mesos > /etc/mesos-slave/containerizers
