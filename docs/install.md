@@ -80,7 +80,9 @@ Configure ZooKeeper on the cluster:
 # configure the node IDs
 for i in 1 2 3 ; do NODES=lxcc0$i vn ex "echo $i > /etc/zookeeper/conf/myid"; done
 # main configure file
-NODES=lxcc0[1-3] vn ex 'echo -e "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888" >> /etc/zookeeper/conf/zoo.cfg'
+NODES=lxcc0[1-3] vn ex '
+  echo -e "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888" >> /etc/zookeeper/conf/zoo.cfg
+'
 # configure the Zookeeper end-points for all Mesos nodes
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
@@ -88,20 +90,20 @@ vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/meso
 Configure Mesos on all nodes:
 
 ```bash
-# configure the Mesos quorum
-NODES=lxcc0[1-3] vn ex 'cat /etc/mesos-master/quorum'
-# configure the Mesos master IPs and hostnames
-vm ex lxcc01 -r 'echo 10.1.1.9 > /etc/mesos-master/ip'
-vm ex lxcc02 -r 'echo 10.1.1.10 > /etc/mesos-master/ip'
-vm ex lxcc03 -r 'echo 10.1.1.11 > /etc/mesos-master/ip'
-NODES=lxcc0[1-3] vn ex 'cp /etc/mesos-master/ip /etc/mesos-master/hostname'
-NODES=lxb00[1-4] vn ex "echo docker,mesos > /etc/mesos-slave/containerizers"
+# configure the master nodes
 NODES=lxcc0[1-3] vn ex '
+  echo 2 > /etc/mesos-master/quorum
+  hostname -i > /etc/mesos-master/ip
+  cp /etc/mesos-master/ip /etc/mesos-master/hostname
   firewall-cmd --permanent --zone=public --add-port=5050/tcp
   firewall-cmd --permanent --zone=public --add-port=8080/tcp
   firewall-cmd --reload
 '
+# configure the slave nodes
 NODES=lxb00[1-4] vn ex '
+  hostname -i > /etc/mesos-slave/ip
+  cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
+  echo docker,mesos > /etc/mesos-slave/containerizers
   firewall-cmd --permanent --zone=public --add-port=5051/tcp
   firewall-cmd --reload
 '
@@ -129,4 +131,6 @@ NODES=lxcc0[1-3] vn ex '
 NODES=lxcc0[1-3] vn ex 'systemctl enable --now zookeeper mesos-master marathon'
 # enable and start required serices on the slaves
 NODES=lxb00[1-4] vn ex 'systemctl enable --now docker mesos-slave'
+# open Mesos web GUI
+$BROWSER http://$(vm ip lxcc01):5050
 ```
