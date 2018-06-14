@@ -67,20 +67,22 @@ Configure Mesos on all nodes:
 ```bash
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
-  yum -y install --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
+  yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
   echo 2 > /etc/mesos-master/quorum
   hostname -i > /etc/mesos-master/ip
   cp /etc/mesos-master/ip /etc/mesos-master/hostname
+  tail -n+1 /etc/mesos-master/{quorum,ip,hostname}
   firewall-cmd --permanent --zone=public --add-port=5050/tcp
   firewall-cmd --permanent --zone=public --add-port=8080/tcp
   firewall-cmd --reload
 '
 # configure the slave nodes
 NODES=lxb00[1-4] vn ex '
-  yum -y install --enablerepo=mesosphere mesos docker
+  yum -y install -q --enablerepo=mesosphere mesos docker
   hostname -i > /etc/mesos-slave/ip
   cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
   echo docker,mesos > /etc/mesos-slave/containerizers
+  tail -n+1 /etc/mesos-slave/ip,hostname,containerizers}
   firewall-cmd --permanent --zone=public --add-port=5051/tcp
   firewall-cmd --reload
 '
@@ -107,9 +109,6 @@ NODES=lxcc0[1-3] vn ex '
   mkdir -p /etc/marathon/conf
   cp /etc/mesos-master/hostname /etc/marathon/conf
   cp /etc/mesos/zk /etc/marathon/conf/master
-'
-# Zookeeper
-NODES=lxcc0[1-3] vn ex '
   echo -e "MARATHON_MASTER=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/default/marathon
   echo -e "MARATHON_ZK=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" >> /etc/default/marathon
 '
