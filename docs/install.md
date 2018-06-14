@@ -97,6 +97,7 @@ for i in 1 2 3
 do 
         NODES=lxcc0$i vn ex "
                 echo $i > /etc/zookeeper/conf/myid
+                ln -s /var/lib/zookeeper /etc/zookeeper/conf/myid
                 echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg 
                 echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
                 echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
@@ -126,11 +127,10 @@ NODES=lxcc0[1-3] vn ex '
 NODES=lxcc0[1-3] vn ex '
   tail -n+1 /etc/zookeeper/conf/myid \
             /etc/mesos-master/{quorum,ip,hostname} \
-            /etc/marathon/conf/{hostname,master,marathon} \
+            /etc/marathon/conf/{hostname,master} \
             /etc/default/marathon
-  grep server /etc/zookeeper/conf/zoo.cfg
+  grep server /etc/zookeeper/conf/zoo.cfg /dev/null
   systemctl enable --now zookeeper mesos-master marathon
-  systemctl is-active zookeeper mesos-master marathon
 '
 # enable and start required serices on the slaves
 NODES=lxb00[1-4] vn ex 'systemctl enable --now docker mesos-slave'
