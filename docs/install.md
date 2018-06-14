@@ -80,7 +80,7 @@ Configure ZooKeeper on the cluster:
 # configure the node IDs
 for i in 1 2 3 ; do NODES=lxcc0$i vn ex "echo $i > /etc/zookeeper/conf/myid"; done
 # main configure file
-NODES=lxcc0[1-3] vn ex 'echo -n "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888\n" > /etc/zookeeper/conf/zoo.cfg'
+NODES=lxcc0[1-3] vn ex 'echo -e "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888" > /etc/zookeeper/conf/zoo.cfg'
 # configure the Zookeeper end-points for all Mesos nodes
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
@@ -102,4 +102,11 @@ NODES=lxcc0[1-3] vn ex '
   cp /etc/mesos/zk /etc/marathon/conf/master
 '
 NODES=lxcc0[1-3] vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" > /etc/marathon/conf/zk'
+```
+
+### Operations
+
+```bash
+# enable and start required services
+NODES=lxcc0[1-3] vn ex 'systemctl enable --now zookeeper mesos-master marathon'
 ```
