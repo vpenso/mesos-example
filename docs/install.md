@@ -83,7 +83,6 @@ NODES=lxb00[1-4] vn ex '
   hostname -i > /etc/mesos-slave/ip
   cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
   echo docker,mesos > /etc/mesos-slave/containerizers
-  tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}
   firewall-cmd --permanent --zone=public --add-port=5051/tcp
   firewall-cmd --reload
 '
@@ -111,11 +110,11 @@ Configure Marathon:
 
 ```bash
 NODES=lxcc0[1-3] vn ex '
-  mkdir -p /etc/marathon/conf
-  cp /etc/mesos-master/hostname /etc/marathon/conf
-  cp /etc/mesos/zk /etc/marathon/conf/master
-  echo -e "MARATHON_MASTER=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/default/marathon
-  echo -e "MARATHON_ZK=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" >> /etc/default/marathon
+        mkdir -p /etc/marathon/conf
+        cp /etc/mesos-master/hostname /etc/marathon/conf
+        cp /etc/mesos/zk /etc/marathon/conf/master
+        echo -e "MARATHON_MASTER=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/default/marathon
+        echo -e "MARATHON_ZK=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" >> /etc/default/marathon
 '
 ```
 
@@ -124,15 +123,18 @@ NODES=lxcc0[1-3] vn ex '
 ```bash
 # enable and start required services on the mastes
 NODES=lxcc0[1-3] vn ex '
-  tail -n+1 /etc/mesos-master/{quorum,ip,hostname} \
-            /var/lib/zookeeper/myid \
-            /etc/marathon/conf/{hostname,master} \
-            /etc/default/marathon
-  grep server /etc/zookeeper/conf/zoo.cfg /dev/null
-  systemctl enable --now zookeeper mesos-master marathon
+        tail -n+1 /etc/mesos-master/{quorum,ip,hostname} \
+                  /var/lib/zookeeper/myid \
+                  /etc/marathon/conf/{hostname,master} \
+                  /etc/default/marathon
+        grep server /etc/zookeeper/conf/zoo.cfg /dev/null
+        systemctl enable --now zookeeper mesos-master marathon
 '
 # enable and start required serices on the slaves
-NODES=lxb00[1-4] vn ex 'systemctl enable --now docker mesos-slave'
+NODES=lxb00[1-4] vn ex '
+        tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}
+        systemctl enable --now docker mesos-slave
+'
 # open Mesos web GUI
 $BROWSER http://$(vm ip lxcc01):5050
 ```
