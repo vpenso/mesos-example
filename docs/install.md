@@ -67,24 +67,19 @@ Configure Mesos on all nodes:
 NODES=lxcc0[1-3] vn ex '
         rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
-        systemctl disable mesos-slave
+        systemctl disable --now mesos-slave firewalld
         echo 2 > /etc/mesos-master/quorum
         hostname -i > /etc/mesos-master/ip
         cp /etc/mesos-master/ip /etc/mesos-master/hostname
-        firewall-cmd --permanent --zone=public --add-port=5050/tcp
-        firewall-cmd --permanent --zone=public --add-port=8080/tcp
-        firewall-cmd --reload
 '
 # configure the slave nodes
 NODES=lxb00[1-4] vn ex '
         rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         yum -y install -q --enablerepo=mesosphere mesos docker
-        systemctl disable mesos-master
+        systemctl disable --now mesos-master firewalld
         hostname -i > /etc/mesos-slave/ip
         cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
         echo docker,mesos > /etc/mesos-slave/containerizers
-        firewall-cmd --permanent --zone=public --add-port=5051/tcp
-        firewall-cmd --reload
 '
 ```
 
@@ -130,12 +125,14 @@ NODES=lxcc0[1-3] vn ex '
                   /etc/default/marathon
         grep server /etc/zookeeper/conf/zoo.cfg /dev/null
         systemctl enable --now zookeeper mesos-master marathon
+        systemctl status zookeeper mesos-master marathon
 '
 # enable and start required serices on the slaves
 NODES=lxb00[1-4] vn ex '
         tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}\
                   /etc/mesos/zk
         systemctl enable --now docker mesos-slave
+        systemctl statusdocker mesos-slave
 '
 # open Mesos web GUI
 $BROWSER http://$(vm ip lxcc01):5050
