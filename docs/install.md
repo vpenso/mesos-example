@@ -126,7 +126,8 @@ NODES=lxcc0[1-3] vn ex '
 NODES=lxcc0[1-3] vn ex '
   tail -n+1 /etc/zookeeper/conf/myid \
             /etc/mesos-master/{quorum,ip,hostname} \
-            /etc/marathon/{hostname,master,marathon}
+            /etc/marathon/conf/{hostname,master,marathon} \
+            /etc/default/marathon
   grep server /etc/zookeeper/conf/zoo.cfg
   systemctl enable --now zookeeper mesos-master marathon
   systemctl is-active zookeeper mesos-master marathon
