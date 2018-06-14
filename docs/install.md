@@ -71,7 +71,6 @@ NODES=lxcc0[1-3] vn ex '
   echo 2 > /etc/mesos-master/quorum
   hostname -i > /etc/mesos-master/ip
   cp /etc/mesos-master/ip /etc/mesos-master/hostname
-  tail -n+1 /etc/mesos-master/{quorum,ip,hostname}
   firewall-cmd --permanent --zone=public --add-port=5050/tcp
   firewall-cmd --permanent --zone=public --add-port=8080/tcp
   firewall-cmd --reload
@@ -98,11 +97,9 @@ for i in 1 2 3
 do 
         NODES=lxcc0$i vn ex "
                 echo $i > /etc/zookeeper/conf/myid
-                cat /etc/zookeeper/conf/myid
                 echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg 
                 echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
                 echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
-                grep server /etc/zookeeper/conf/zoo.cfg
         "
 done
 # configure the Zookeeper end-points for all Mesos nodes
@@ -126,7 +123,14 @@ NODES=lxcc0[1-3] vn ex '
 
 ```bash
 # enable and start required services on the mastes
-NODES=lxcc0[1-3] vn ex 'systemctl enable --now zookeeper mesos-master marathon'
+NODES=lxcc0[1-3] vn ex '
+  tail -n+1 /etc/zookeeper/conf/myid \
+            /etc/mesos-master/{quorum,ip,hostname} \
+            /etc/marathon/{hostname,master,marathon}
+  grep server /etc/zookeeper/conf/zoo.cfg
+  systemctl enable --now zookeeper mesos-master marathon
+  systemctl is-active zookeeper mesos-master marathon
+'
 # enable and start required serices on the slaves
 NODES=lxb00[1-4] vn ex 'systemctl enable --now docker mesos-slave'
 # open Mesos web GUI
