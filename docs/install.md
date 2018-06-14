@@ -85,7 +85,7 @@ NODES=lxcc0[1-3] vn ex 'echo -e "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10
 vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
 ```
 
-Configure the Mesos masters:
+Configure Mesos on all nodes:
 
 ```bash
 # configure the Mesos quorum
@@ -95,18 +95,38 @@ vm ex lxcc01 -r 'echo 10.1.1.9 > /etc/mesos-master/ip'
 vm ex lxcc02 -r 'echo 10.1.1.10 > /etc/mesos-master/ip'
 vm ex lxcc03 -r 'echo 10.1.1.11 > /etc/mesos-master/ip'
 NODES=lxcc0[1-3] vn ex 'cp /etc/mesos-master/ip /etc/mesos-master/hostname'
-# configure Marathon
+NODES=lxb00[1-4] vn ex "echo docker,mesos > /etc/mesos-slave/containerizers"
+NODES=lxcc0[1-3] vn ex '
+  firewall-cmd --permanent --zone=public --add-port=5050/tcp
+  firewall-cmd --permanent --zone=public --add-port=8080/tcp
+  firewall-cmd --reload
+'
+NODES=lxb00[1-4] vn ex '
+  firewall-cmd --permanent --zone=public --add-port=5051/tcp
+  firewall-cmd --reload
+'
+```
+
+Configure Marathon:
+
+```bash
 NODES=lxcc0[1-3] vn ex '
   mkdir -p /etc/marathon/conf
   cp /etc/mesos-master/hostname /etc/marathon/conf
   cp /etc/mesos/zk /etc/marathon/conf/master
 '
-NODES=lxcc0[1-3] vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" > /etc/marathon/conf/zk'
+# Zookeeper
+NODES=lxcc0[1-3] vn ex '
+  echo -e "MARATHON_MASTER=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/default/marathon
+  echo -e "MARATHON_ZK=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" >> /etc/default/marathon
+'
 ```
 
 ### Operations
 
 ```bash
-# enable and start required services
+# enable and start required services on the mastes
 NODES=lxcc0[1-3] vn ex 'systemctl enable --now zookeeper mesos-master marathon'
+# enable and start required serices on the slaves
+NODES=lxb00[1-4] vn ex 'systemctl enable --now docker mesos-slave'
 ```
