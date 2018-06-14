@@ -67,12 +67,25 @@ Install required packages on all nodes
 # configure the Mesosphere package repository on all nodes
 vn ex 'rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm'
 # install the master nodes
-NODES=lxcc0[1-3] vn ex 'yum -y install --enablerepo=mesosphere mesos marathon'
+NODES=lxcc0[1-3] vn ex 'yum -y install --enablerepo=mesosphere mesos mesosphere-zookeeper marathon'
 # install the slave nodes
 NODES=lxb00[1-4] vn ex 'yum -y install --enablerepo=mesosphere mesos docker'
 ```
 
 ### Configuration
+
+Configure ZooKeeper on the cluster:
+
+```bash
+# configure the Zookeeper IDs on the masters
+for i in 1 2 3 ; do NODES=lxcc0$i vn ex "echo $i > /etc/zookeeper/conf/myid"; done
+# configure Zookeeper on the masters
+NODES=lxcc0[1-3] vn ex 'echo -n "server.1=10.1.1.9:2888:3888\nserver.2=10.1.1.10:2888:3888\nserver.3=10.1.1.11:2888:3888\n" > /etc/zookeeper/conf/zoo.cfg
+# configure the Zookeeper server for all Mesos nodes
+vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zsk'
+```
+
+Configure the Mesos masters:
 
 ```bash
 ```
