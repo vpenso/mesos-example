@@ -28,7 +28,7 @@ rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noa
 yum -y install --enablerepo=mesosphere \
         mesos docker mesosphere-zookeeper marathon chronos
 # use Docker as containerizer
-echo 'docker,mesos' > /etc/mesos-slave/containerizers
+echo docker,mesos > /etc/mesos-slave/containerizers
 # configure Marathon
 cat << EOF > /etc/default/marathon
 MARATHON_MASTER=zk://127.0.0.1:2181/mesos
@@ -63,12 +63,12 @@ lxcc0[1-3],lxb00[1-4]
 Configure Mesos on all nodes:
 
 ```bash
+# add mesosphere RPM repo, disable IPv6 and security
 vn ex '
+        rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         sysctl -w net.ipv6.conf.all.disable_ipv6=1
         sysctl -w net.ipv6.conf.default.disable_ipv6=1
-        rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         systemctl disable --now firewalld
-        # disable SELinux
         setenforce 0 && sestatus
 '
 # configure the master nodes
