@@ -70,7 +70,6 @@ vn ex '
         systemctl disable --now firewalld
         # disable SELinux
         setenforce 0 && sestatus
-
 '
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
@@ -82,7 +81,6 @@ NODES=lxcc0[1-3] vn ex '
 '
 # configure the slave nodes
 NODES=lxb00[1-4] vn ex '
-        rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-3.noarch.rpm
         yum -y install -q --enablerepo=mesosphere mesos docker
         systemctl disable --now mesos-master
         hostname -i > /etc/mesos-slave/ip
