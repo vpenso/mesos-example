@@ -1,14 +1,27 @@
 # Mesos
 
-Mesos allocates resources to frameworks which do workload specific scheduling
+Mesos Ecosystem:
 
-Architecture (birds view)
+* [Apache Mesos][1] - OpenSource cluster resource manager system
+  - Distributed system kernel, abstract resource pool (CPUs, memory, etc)
+  - API for resource management across datacenters and/or cloud providers
+* [Mesosphere][3] - Company offering DC/OS and heavily contributing to Mesos
+* [DC/OS][4] (Data Center Operating System)
+  - Commercial product build around/upon Mesos "kernel"
+  - Simplifies framework deployment (app-store like installation)
+  - Built-in high-availability and fault-tolerance (services & frameworks)
+  - Advanced operational tools (CLI & GUI)
+  - [DC/OS OpenSource][5] available on Github
+
+## Architecture
+
+Mesos allocates resources to frameworks which do workload specific scheduling
 
 * Mesos provides low-level **abstraction of physical resources**
 * **Frameworks** abstract away operational concerns of distributed systems
 * **Tasks** concerned with computation-specific problems
 
-**Two-level scheduling** separates responsibilities between Mesos and frameworks
+(Application) **Two-level scheduling** separates responsibilities between Mesos and frameworks
 
 Mesos (distributed system kernel, data center time-sharing)
 
@@ -47,5 +60,18 @@ Frameworks (== pluggable schedulers):
   - Configures container isolation
   - Provides container stats and status
 
+### High-Availability
 
+* If the master is unavailable
+  - Existing tasks continue execution
+  - New resources can not be allocated
+* Use multiple Mesos masters:
+  - **Leader**, active master
+  - Backup masters in case of failure
+  - Master **election** with Apache Zookeeper
 
+[1]: https://mesos.apache.org/
+[2]: https://github.com/apache/mesos/
+[3]: https://mesosphere.com/
+[4]: https://dcos.io/
+[5]: https://github.com/dcos/dcos
