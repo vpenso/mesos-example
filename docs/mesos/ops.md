@@ -33,8 +33,17 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
         jq '.slaves[] | {hostname,active,resources}'
 ```
 
-### Slave
+### Agents
 
+```bash
+# check the containerizer
+curl -s http://$(vm ip lxb001):$MESOS_SLAVE_PORT/state |\
+        jq '.flags.containerizers'
+NODES=lxb00[1-4] vn ex '
+        echo mesos,docker > /etc/mesos-slave/containerizers
+        systemctl restart mesos-slave
+'
+```
 
 ### Tasks
 

@@ -15,7 +15,7 @@
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible
 
-Other container orchestration systems:
+Competing systems build for container orchestration:
 
 - [Kubernetes][8]
 - [Nomad][9]
@@ -36,10 +36,12 @@ Mesos (distributed system kernel, data center time-sharing)
 - Enables dynamic **resource parititoning** (fault-tolerant elastic distributed systems)
 - Abstracts CPU, memory, storage(, etc.) away from machines (physical/virtual)
 - Understands primitives of distributed computing, no intelligence on using these efficiently
-- **Master** node (+ standby masters for HA), requires service discovery (e.g. ZooKepper)
+- **Master** node (+ standby masters for HA), requires service discovery (e.g. ZooKeeper)
 - **Slave** (agent) nodes (physical resources), advertise available resources/attributes
 - **Offers resources** to frameworks (schedulers)
 - Dispatches tasks to the slave nodes, reallocates when tasks end
+
+Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
 Frameworks (== pluggable schedulers):
 
