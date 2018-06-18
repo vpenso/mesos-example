@@ -61,11 +61,7 @@ mesos-execute --master=$(hostname -i):5050 \
               --containerizer=mesos \
               --resources='cpus:0.1;mem:32' \
               --command='echo sleep... ; sleep 300'
-```
-
-Process hierarchy started, similar to: 
-
-```bash
+# process hierarchy on the agent node 
 /usr/sbin/mesos-slave ...
 ...
   /usr/libexec/mesos/mesos-containerizer launch
@@ -76,14 +72,17 @@ Process hierarchy started, similar to:
 A task with a simple docker container:
 
 ```bash
-vm ex lxcc01 -r "
-        mesos-execute --master=$(hostname -i):5050 \
-                      --name=sleep \
-                      --containerizer=docker \
-                      --docker_image='busybox:latest" \
-                      --resources='cpus:0.5;mem:128' \
-                      --command='echo sleep... ; sleep 300'
-"
+mesos-execute --master=$(hostname -i):5050 \
+              --name=sleep \
+              --containerizer=docker \
+              --docker_image='busybox:latest' \
+              --resources='cpus:0.5;mem:128' \
+              --command='echo sleep... ; sleep 300'
+# process hierarchy on the agent node 
+/usr/sbin/mesos-slave ...
+  ...
+  mesos-docker-executor ...
+    /usr/bin/docker-current -H unix:///var/run/docker.sock ... busybox:latest -c echo sleep... ; sleep 300
 ```
 
 
