@@ -1,5 +1,3 @@
-Mesos Ecosystem:
-
 [Apache Mesos][1] - OpenSource cluster resource manager system
 
 - Distributed system kernel, abstract resource pool (CPUs, memory, etc)
@@ -17,6 +15,12 @@ Mesos Ecosystem:
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible
 
+Other container orchestration systems:
+
+- [Kubernetes][8]
+- [Nomad][9]
+- [Swarm][10]
+
 ## Architecture
 
 Mesos allocates resources to frameworks which do workload specific scheduling
@@ -31,7 +35,7 @@ Mesos (distributed system kernel, data center time-sharing)
 
 - Enables dynamic **resource parititoning** (fault-tolerant elastic distributed systems)
 - Abstracts CPU, memory, storage(, etc.) away from machines (physical/virtual)
-- Understands primitivs of distributed computing, no intelligence on using these efficiently
+- Understands primitives of distributed computing, no intelligence on using these efficiently
 - **Master** node (+ standby masters for HA), requires service discovery (e.g. ZooKepper)
 - **Slave** (agent) nodes (physical resources), advertise available resources/attributes
 - **Offers resources** to frameworks (schedulers)
@@ -47,6 +51,25 @@ Frameworks (== pluggable schedulers):
   - Stateful services (e.g. databases)
   - Periodic (cron like) jobs, (i.e. Chronos, Jenkins)
   - Batch jobs (sequential/parallel)
+
+### Executor
+
+Agents (slaves) launch an executor to run framework tasks:
+
+- Communicates to the agent via HTTP API
+- Can launch multiple tasks
+- Notifies agent about task state, may receive state change from agent
+
+List of executors:
+
+Name                  | Description
+----------------------|--------------------------------------------------------
+command executor      | (legacy v0 API) starting a single task
+docker executor       | launches docker container (instead of a command)
+default executor      | (v1 API) capable of running **pods** (task groups)
+custom executor       | build to handle custom workloads
+
+
 
 ### Containerization
 
@@ -74,9 +97,12 @@ Frameworks (== pluggable schedulers):
   - Backup masters in case of failure
   - Master **election** with Apache Zookeeper
 
-[1]: https://mesos.apache.org/
-[2]: https://github.com/apache/mesos/
-[3]: https://mesosphere.com/
-[4]: https://dcos.io/
-[5]: https://github.com/dcos/dcos
-[7]: https://github.com/UnivaCorporation/urb-core
+[1]:  https://mesos.apache.org
+[2]:  https://github.com/apache/mesos
+[3]:  https://mesosphere.com
+[4]:  https://dcos.io
+[5]:  https://github.com/dcos/dcos
+[7]:  https://github.com/UnivaCorporation/urb-core
+[8]:  https://kubernetes.io
+[9]:  https://www.nomadproject.io
+[10]: https://docs.docker.com/engine/swarm/

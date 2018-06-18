@@ -16,6 +16,33 @@ journalctl -fu mesos-master
 mesos-resolve $(cat /etc/mesos/zk)
 ```
 
+### Tasks
+
+Launch tasks with `mesos-execute`
+
+```bash
+# as simple as possible
+mesos-execute --master=10.1.1.9:5050 \
+              --name=sleep \
+              --command='echo sleep... ; sleep 15'
+# specify resources and the containerizer
+mesos-execute --master=10.1.1.9:5050 \
+              --name=sleep \
+              --containerizer=mesos \
+              --resources='cpus:0.1;mem:32' \
+              --command='echo sleep... ; sleep 300'
+```
+
+On the following process hierachy will be started: 
+
+```bash
+/usr/sbin/mesos-slave ...
+...
+  /usr/libexec/mesos/mesos-containerizer launch
+    mesos-executor --launcher_dir=/usr/libexec/mesos
+      sh -c echo sleep
+```
+
 
 ### Trouble Shooting
 
