@@ -13,6 +13,7 @@ Mesos framework designed to launch **long-running applications** (services).
 * The **application definition** describes the task setup and configuration
 
 ```bash
+
 # example application definitions
 ls -1 $MESOS_EXAMPLE/var/marathon/apps
 ```

@@ -85,7 +85,7 @@ NODES=lxb00[1-4] vn ex '
         systemctl disable --now mesos-master
         hostname -i > /etc/mesos-slave/ip
         cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
-        echo docker,mesos > /etc/mesos-slave/containerizers
+        #echo docker,mesos > /etc/mesos-slave/containerizers
 '
 ```
 
@@ -138,8 +138,15 @@ NODES=lxb00[1-4] vn ex '
         tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}\
                   /etc/mesos/zk
         systemctl enable --now docker mesos-slave
-        systemctl statusdocker mesos-slave
+        systemctl status docker mesos-slave
 '
-# open Mesos web GUI
+
+### Usage
+
+```bash
+# web GUis
 $BROWSER http://$(vm ip lxcc01):5050
+$BROWSER http://$(vm ip lxcc01):8080
+# environment
+export MARATHON_URL=http://$(vm ip lxcc01):8080
 ```
