@@ -140,6 +140,7 @@ NODES=lxb00[1-4] vn ex '
         systemctl enable --now docker mesos-slave
         systemctl status docker mesos-slave
 '
+```
 
 ### Usage
 
@@ -149,4 +150,9 @@ $BROWSER http://$(vm ip lxcc01):5050
 $BROWSER http://$(vm ip lxcc01):8080
 # environment
 export MARATHON_URL=http://$(vm ip lxcc01):8080
+# start an example application
+curl -s $MARATHON_URL/v2/apps \
+     -X POST \
+     -H "Content-type: application/json" \
+     -d @$MESOS_EXAMPLE/var/marathon/apps/docker-http-server.json
 ```
