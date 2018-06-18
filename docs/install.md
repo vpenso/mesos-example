@@ -114,8 +114,8 @@ NODES=lxcc0[1-3] vn ex '
         mkdir -p /etc/marathon/conf
         cp /etc/mesos-master/hostname /etc/marathon/conf
         cp /etc/mesos/zk /etc/marathon/conf/master
-        echo -e "MARATHON_MASTER=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/default/marathon
-        echo -e "MARATHON_ZK=zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/marathon" >> /etc/default/marathon
+        echo -e "MARATHON_MASTER=zk://10.1.1.9:21818,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/default/marathon
+        echo -e "MARATHON_ZK=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/marathon" >> /etc/default/marathon
 '
 ```
 

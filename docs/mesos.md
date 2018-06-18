@@ -11,9 +11,16 @@ mesos-master --ip=$(hostname -i) \
              --zk_session_timeout=10secs
 # tail the log continuously
 journalctl -fu mesos-master
+# leader election
+mesos-resolve $(cat /etc/mesos/zk)
 ```
 
+
+### Trouble Shooting
+
 ```bash
-:ZOO_ERROR@handle_socket_error_msg@1758: Socket [10.1.1.9:2128] zk retcode=-4, errno=111(Connection refused): server refused to accept the client
+...ZOO_ERROR...errno=111(Connection refused): server refused to accept the client
 ```
+
+Make sure the firewall is not blocking access, and IP addresses and ports a correctly configured in `/etc/master/zk`
 
