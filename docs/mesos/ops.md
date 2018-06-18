@@ -85,6 +85,13 @@ mesos-execute --master=$(hostname -i):5050 \
     /usr/bin/docker-current -H unix:///var/run/docker.sock ... busybox:latest -c echo sleep... ; sleep 300
 ```
 
+### Frameworks
+
+```bash
+# list frameworks
+curl -s http://$MESOS_MASTER_IP_PORT/frameworks |\
+        jq '.frameworks[] | {name,hostname,active}'
+```
 
 ## Trouble Shooting
 
