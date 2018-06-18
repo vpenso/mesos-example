@@ -12,6 +12,12 @@ Mesos Ecosystem:
   - Built-in high-availability and fault-tolerance (services & frameworks)
   - Advanced operational tools (CLI & GUI)
   - [DC/OS OpenSource][5] available on Github
+* Univa [URB][7] (Universal Resource Broker) is Mesos API compatible
+
+Ref.:
+
+[What does Apache Mesos do that Kubernetes can't do and vice-versa?](https://stackoverflow.com/questions/47769570/what-does-apache-mesos-do-that-kubernetes-cant-do-and-vice-versa)
+
 
 ## Architecture
 
@@ -75,3 +81,4 @@ Frameworks (== pluggable schedulers):
 [3]: https://mesosphere.com/
 [4]: https://dcos.io/
 [5]: https://github.com/dcos/dcos
+[7]: https://github.com/UnivaCorporation/urb-core

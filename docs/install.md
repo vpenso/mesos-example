@@ -103,7 +103,7 @@ do
         "
 done
 # configure the Zookeeper end-points for all Mesos nodes
-vn ex 'echo "zk://10.1.1.9:2128,10.1.1.10:2128,10.1.1.11:2128/mesos" > /etc/mesos/zk'
+vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
 ```
 
 
