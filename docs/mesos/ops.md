@@ -16,6 +16,18 @@ journalctl -fu mesos-master
 mesos-resolve $(cat /etc/mesos/zk)
 ```
 
+Status information exposed by the HTTP API
+
+```bash
+# query master state
+curl -s http://$(vm ip lxcc01):5050/state | jq
+# master configuration (authentication/authorization)
+curl -s http://$(vm ip lxcc01):5050/master/flags | jq
+# check agent state
+curl -s http://$(vm ip lxcc01):5050/master/state-summary |\
+        jq '.slaves[] | {hostname,active,resources}'
+```
+
 ### Tasks
 
 Launch tasks with `mesos-execute`
@@ -33,7 +45,7 @@ mesos-execute --master=10.1.1.9:5050 \
               --command='echo sleep... ; sleep 300'
 ```
 
-On the following process hierachy will be started: 
+On the following process hierarchy will be started: 
 
 ```bash
 /usr/sbin/mesos-slave ...
@@ -43,8 +55,19 @@ On the following process hierachy will be started:
       sh -c echo sleep
 ```
 
+```bash
+mesos-execute --master=10.1.1.9:5050 \
+              --name=sleep \
+              --containerizer=docker \
+              --docker_image=' busybox:latest' \
+              --resources='cpus:0.5;mem:128' \
+              --command='echo sleep... ; sleep 300'
+```
+
 
 ### Trouble Shooting
+
+Mesos can not connect to the Zookeeper cluster:
 
 ```bash
 ...ZOO_ERROR...errno=111(Connection refused): server refused to accept the client
