@@ -76,14 +76,14 @@ Process hierarchy started, similar to:
 A task with a simple docker container:
 
 ```bash
-vm ex lxcc01 -r '
+vm ex lxcc01 -r "
         mesos-execute --master=$(hostname -i):5050 \
                       --name=sleep \
                       --containerizer=docker \
-                      --docker_image=' busybox:latest' \
+                      --docker_image='busybox:latest" \
                       --resources='cpus:0.5;mem:128' \
                       --command='echo sleep... ; sleep 300'
-'
+"
 ```
 
 
