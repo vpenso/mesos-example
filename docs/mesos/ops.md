@@ -1,5 +1,10 @@
 
+
+## Operations
+
 <https://mesos.readthedocs.io>
+
+### Master
 
 ```bash
 # show all default configurations
@@ -20,32 +25,35 @@ Status information exposed by the HTTP API
 
 ```bash
 # query master state
-curl -s http://$(vm ip lxcc01):5050/state | jq
+curl -s http://$MESOS_MASTER_IP_PORT/state | jq
 # master configuration (authentication/authorization)
-curl -s http://$(vm ip lxcc01):5050/master/flags | jq
+curl -s http://$MESOS_MASTER_IP_PORT/master/flags | jq
 # check agent state
-curl -s http://$(vm ip lxcc01):5050/master/state-summary |\
+curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
         jq '.slaves[] | {hostname,active,resources}'
 ```
 
+### Slave
+
+
 ### Tasks
 
-Launch tasks with `mesos-execute`
+Launch tasks from the **Mesos master**:
 
 ```bash
 # as simple as possible
-mesos-execute --master=10.1.1.9:5050 \
+mesos-execute --master=$(hostname -i):5050 \
               --name=sleep \
               --command='echo sleep... ; sleep 15'
 # specify resources and the containerizer
-mesos-execute --master=10.1.1.9:5050 \
+mesos-execute --master=$(hostname -i):5050 \
               --name=sleep \
               --containerizer=mesos \
               --resources='cpus:0.1;mem:32' \
               --command='echo sleep... ; sleep 300'
 ```
 
-On the following process hierarchy will be started: 
+Process hierarchy started, similar to: 
 
 ```bash
 /usr/sbin/mesos-slave ...
@@ -55,8 +63,10 @@ On the following process hierarchy will be started:
       sh -c echo sleep
 ```
 
+A task with a simple docker container:
+
 ```bash
-mesos-execute --master=10.1.1.9:5050 \
+mesos-execute --master=$(hostname -i):5050 \
               --name=sleep \
               --containerizer=docker \
               --docker_image=' busybox:latest' \
@@ -65,7 +75,7 @@ mesos-execute --master=10.1.1.9:5050 \
 ```
 
 
-### Trouble Shooting
+## Trouble Shooting
 
 Mesos can not connect to the Zookeeper cluster:
 
