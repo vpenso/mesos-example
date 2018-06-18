@@ -6,6 +6,8 @@ Mesos framework designed to launch **long-running applications** (services).
 * Replaces the traditional init-system in a **clustered** environment
 * Adds scaling and self-healing capabilities (high-availability, health checks)
 
+<https://mesosphere.github.io/marathon/docs/>
+
 ## Application
 
 * Typically a long-running service with instances on multiple nodes
