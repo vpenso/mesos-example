@@ -1,10 +1,12 @@
+**Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
+
 # Mesos Example
 
 This example uses virtual machines setup with vm-tools:
 
 <https://github.com/vpenso/vm-tools>
 
-Install Zookeeper & Mesos on a single node:
+Install Zookeeper, Mesos, Marathon and Chronis on a single node:
 
 ```bash
 # start a CentOS 7 VM instance
@@ -12,8 +14,6 @@ vm s centos7 lxdev01
 # login and configure manually 
 vm lo lxdev01 -r
 ```
-
-For a Mesos Cluster example read [INSTALL.md](INSTALL.md)
 
 ### Configuration
 
