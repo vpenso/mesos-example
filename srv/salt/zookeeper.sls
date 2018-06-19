@@ -18,6 +18,15 @@ zookeeper_id:
     - content: '3'
 {% endif %}
 
+zookeeper_firewall:
+  firewalld.present:
+    - name: public
+    - ports:
+      - 2181/tcp
+      - 2888/tcp
+      - 3888/tcp
+    - prune_services: False
+
 zookeeper_service:
   service.running:
     - name: zookeeper.service
