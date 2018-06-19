@@ -5,7 +5,7 @@ zookeeper_packages:
 zookeeper_conf:
   file.managed:
     - name: /etc/zookeeper/conf/zoo.cfg
-    - file: salt://zookeeper/zoo.cfg
+    - source: salt://zookeeper/zoo.cfg
 
 zookeeper_id:
   file.managed:
