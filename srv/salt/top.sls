@@ -6,6 +6,8 @@ base:
   lxcc0[1-3].devops.test:
      - yum-mesos
      - zookeeper
+     - mesos-zookeeper
      - mesos-master
   lxb00[1-4].devops.test:
      - yum-mesos
+     - mesos-zookeeper

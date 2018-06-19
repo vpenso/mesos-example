@@ -21,6 +21,7 @@ zookeeper_id:
 zookeeper_service:
   service.running:
     - name: zookeeper.service
+    - enable: True
     - watch:
       - file: /etc/zookeeper/conf/zoo.cfg
       - file: /var/lib/zookeeper/myid

@@ -20,3 +20,12 @@ mesos_master_hostname:
   file.managed:
     - name: /etc/mesos-master/hostname
     - contents: {{ grains['fqdn_ip4'] }}
+
+mesos_master_serice:
+  service.running:
+    - name: mesos-master.service
+    - enable: True
+    - watch:
+      - file: /etc/mesos-master/quorum
+      - file: /etc/mesos-master/ip
+      - file: /etc/mesos-master/hostname

@@ -203,13 +203,15 @@ vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
 
 
 Node       | SLS                     | Description
------------|-------------------------|-----------------------
-lxcc0[1-3] | [mesos-master.sls][6]   | Mesos master cluster
+-----------|--------------------------|-----------------------
+lxcc0[1-3] | [mesos-master.sls][6]    | Mesos master configuration
+~          | [mesos-zookeeper.sls][7] | Zookeeper cluster used by the Mesos masters 
 
 ```bash
 # configure zookeeper on the nodes
-vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply mesos-master'
+vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply mesos-*'
 ```
 
 [5]: srv/salt/zookeeper.sls
-[5]: srv/salt/mesos-master.sls
+[6]: srv/salt/mesos-master.sls
+[7]: srv/salt/mesos-zookeeper.sls
