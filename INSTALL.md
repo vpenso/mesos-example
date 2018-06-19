@@ -184,3 +184,9 @@ vm sy lxcm01 -r $MESOS_EXAMPLE/srv/salt :/srv/
 # accept all Salt minions
 vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
 ```
+
+### Zookeeper
+
+```bash
+vm ex lxcm01 -r 'salt lxcc01.devops.test state.apply'
+```
