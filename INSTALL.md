@@ -185,9 +185,9 @@ Sync the Salt configuration to the master:
 
 ```bash
 # upload the salt-master service configuration files
-vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
+vm sy lxcm01 -r $MESOS_EXAMPLE/etc/salt/master :/etc/salt/
 # upload the salt configuration reposiotry
-vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
+vm sy lxcm01 -r $MESOS_EXAMPLE/srv/salt :/srv/
 # accept all Salt minions
 vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
 ```
