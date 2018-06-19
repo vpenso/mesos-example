@@ -187,6 +187,17 @@ vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
 
 ### Zookeeper
 
+Node       | SLS                  | Description
+-----------|----------------------|-----------------------
+lxcc0[1-3] | [zookeeper.sls][5]   | Zookeeper cluster configuration
+
+
 ```bash
-vm ex lxcm01 -r 'salt lxcc01.devops.test state.apply'
+# configure zookeeper on the nodes
+vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply zookeeper'
+# check if it is running
+vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
 ```
+
+
+[5]: srv/salt/zookeeper.sls
