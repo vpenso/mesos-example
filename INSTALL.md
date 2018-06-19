@@ -1,4 +1,4 @@
-## Small Cluster
+# Manual Install
 
 Provision all required virtual machine instances with vm-tools:
 
@@ -47,10 +47,10 @@ Configure ZooKeeper on the cluster:
 ```bash
 # configure the master nodes
 for i in 1 2 3
-do 
+do
         NODES=lxcc0$i vn ex "
                 echo $i > /var/lib/zookeeper/myid
-                echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg 
+                echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
                 echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
                 echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
         "
@@ -109,3 +109,70 @@ curl -s $MARATHON_URL/v2/apps \
      -H "Content-type: application/json" \
      -d @$MESOS_EXAMPLE/var/marathon/apps/docker-http-server.json
 ```
+
+
+
+
+# SaltStack Install
+
+This example uses virtual machines setup with **vm-tools**:
+
+<https://github.com/vpenso/vm-tools>
+
+The shell script [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
+
+### Prerequisites
+
+Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
+
+[spr]: https://docs.saltstack.com/en/latest/topics/installation/rhel.html
+
+```bash
+>>> cat /etc/yum.repos.d/salt.repo
+[saltstack-repo]
+name=SaltStack repo for Red Hat Enterprise Linux $releasever
+baseurl=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
+       https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
+```
+
+List of required virtual machines and services:
+
+Nodes            | Description
+-----------------|---------------------
+lxcm01           | SaltStack master
+lxcc0[1-3]       | Zookeeper & Mesos Scheduler
+lxb00[1-4]       | Mesos Agents & Docker
+
+Provision all required virtual machine instances with vm-tools:
+
+```bash
+# start new VM instances using `centos7` as source image
+vn s centos7
+# clean up everything and start from scratch
+vn r
+```
+
+### Deployment
+
+Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
+
+```bash
+# install the SaltStack master
+vm ex lxcm01 -r '
+        yum install -y salt-master;
+        firewall-cmd --permanent --zone=public --add-port=4505-4506/tcp;
+        firewall-cmd --reload;
+        systemctl enable --now salt-master && systemctl status salt-master
+'
+# install the SaltStack minions on all nodes
+vn ex '
+        yum install -y salt-minion;
+        echo "master: 10.1.1.7" > /etc/salt/minion;
+        systemctl enable --now salt-minion && systemctl status salt-minion
+'
+```
+
+
