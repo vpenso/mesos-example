@@ -175,4 +175,19 @@ vn ex '
 '
 ```
 
+## Configuration
 
+Sync the Salt configuration to the master:
+
+* [srv/salt/](srv/salt/) - The **state tree** includes all SLS (SaLt State file) representing the state in which all nodes should be
+* [etc/salt/master](etc/salt/master) - Salt master configuration (`file_roots` defines to location of the state tree)
+* [srv/salt/top.sls](srv/salt/top.sls) - Maps nodes to SLS configuration files (cf. [top file](https://docs.saltstack.com/en/latest/ref/states/top.html))
+
+```bash
+# upload the salt-master service configuration files
+vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
+# upload the salt configuration reposiotry
+vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
+# accept all Salt minions
+vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
+```

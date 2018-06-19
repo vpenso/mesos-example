@@ -1,23 +1,21 @@
+# Mesos Example
+
 This example uses virtual machines setup with vm-tools:
 
 <https://github.com/vpenso/vm-tools>
 
-## Single Node
+Install Zookeeper & Mesos on a single node:
 
 ```bash
 # start a CentOS 7 VM instance
 vm s centos7 lxdev01
 # login and configure manually 
 vm lo lxdev01 -r
-# open Mesos web GUI 
-$BROWSER http://$(vm ip lxdev01):5050
-# open Marathon web GUI
-$BROWSER http://$(vm ip lxdev01):8080
-# open Chronos web GUI
-$BROWSER http://$(vm ip lxdev01):4400
 ```
 
-Configuration in the VM instance:
+For a Mesos Cluster example read [INSTALL.md](INSTALL.md)
+
+### Configuration
 
 ```bash
 ## -- CentOS --##
@@ -43,3 +41,17 @@ firewall-cmd --permanent --zone=public --add-port=8080/tcp # marathon
 firewall-cmd --permanent --zone=public --add-port=4400/tcp # chronos
 firewall-cmd --reload
 ```
+
+Operational details cf. [docs/mesos/ops.md](docs/mesos/ops.md)
+
+### Usage
+
+Use the web-interfaces to start tasks:
+
+```bash
+# open Mesos web GUI 
+$BROWSER http://$(vm ip lxdev01):5050
+# open Marathon web GUI
+$BROWSER http://$(vm ip lxdev01):8080
+# open Chronos web GUI
+$BROWSER http://$(vm ip lxdev01):4400
