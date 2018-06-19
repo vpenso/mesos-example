@@ -1,0 +1,18 @@
+[mesosphere]
+name=Mesosphere Packages for EL 7 - $basearch
+baseurl=http://repos.mesosphere.com/el/7/$basearch/
+enabled=1
+gpgcheck=0
+
+[mesosphere-noarch]
+name=Mesosphere Packages for EL 7 - noarch
+baseurl=http://repos.mesosphere.com/el/7/noarch/
+enabled=1
+gpgcheck=0
+
+[mesosphere-source]
+name=Mesosphere Packages for EL 7 - $basearch - Source
+baseurl=http://repos.mesosphere.com/el/7/SRPMS/
+enabled=0
+gpgcheck=0
+
