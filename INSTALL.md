@@ -1,16 +1,30 @@
-# Manual Install
+This example uses virtual machines setup with **vm-tools**:
+
+<https://github.com/vpenso/vm-tools>
+
+The shell script [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
 
 Provision all required virtual machine instances with vm-tools:
 
 ```bash
-# list the VM instances
->>> NODES
-lxcc0[1-3],lxb00[1-4]
 # start new VM instances using `centos7` as source image
 >>> vn s centos7
 # clean up everything to start from scratch
 >>> vn r
 ```
+
+List of required virtual machines and services:
+
+Nodes            | Description
+-----------------|---------------------
+lxcm01           | SaltStack master
+lxcc0[1-3]       | Zookeeper & Mesos Scheduler
+lxb00[1-4]       | Mesos Agents & Docker
+
+# Manual Install
+
+Manual installation of a Mesos CLuster.
+
 ### Configuration
 
 Configure Mesos on all nodes:
@@ -115,11 +129,7 @@ curl -s $MARATHON_URL/v2/apps \
 
 # SaltStack Install
 
-This example uses virtual machines setup with **vm-tools**:
-
-<https://github.com/vpenso/vm-tools>
-
-The shell script [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
+Use SaltStack to deploy the Mesos Cluster.
 
 ### Prerequisites
 
@@ -136,23 +146,6 @@ enabled=1
 gpgcheck=1
 gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
        https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
-```
-
-List of required virtual machines and services:
-
-Nodes            | Description
------------------|---------------------
-lxcm01           | SaltStack master
-lxcc0[1-3]       | Zookeeper & Mesos Scheduler
-lxb00[1-4]       | Mesos Agents & Docker
-
-Provision all required virtual machine instances with vm-tools:
-
-```bash
-# start new VM instances using `centos7` as source image
-vn s centos7
-# clean up everything and start from scratch
-vn r
 ```
 
 ### Deployment
