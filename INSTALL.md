@@ -209,9 +209,9 @@ lxcc0[1-3] | [mesos-master.sls][6]    | Master configuration
 lxb00[1-4] | [mesos-slave.sls][8]    | Slave configuration
 
 ```bash
-# configure 
-vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply'
-vm ex lxcm01 -r 'salt lxb*.devops.test state.apply'
+# configure masters/slaves 
+vm ex lxcm01 -r 'salt -E lxcc* state.apply mesos-master'
+vm ex lxcm01 -r 'salt -E lxb* state.apply'
 ```
 
 [5]: srv/salt/zookeeper.sls
