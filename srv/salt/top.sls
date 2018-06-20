@@ -7,10 +7,9 @@ base:
      - yum-mesos
      - zookeeper
      - mesos-zookeeper
-     - mesos-firewall
      - mesos-master
   lxb00[1-4].devops.test:
      - yum-mesos
+     - docker
      - mesos-zookeeper
-     - mesos-firewall
      - mesos-slave
