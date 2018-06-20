@@ -20,11 +20,11 @@ zookeeper_id:
   file.managed:
     - name: /var/lib/zookeeper/myid
 {% if   grains['fqdn'] == 'lxcc01.devops.test' %}
-    - content: '1'
+    - contents: '1'
 {% elif grains['fqdn'] == 'lxcc02.devops.test' %}
-    - content: '2'
+    - contents: '2'
 {% elif grains['fqdn'] == 'lxcc03.devops.test' %}
-    - content: '3'
+    - contents: '3'
 {% endif %}
 
 #
