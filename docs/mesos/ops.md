@@ -33,6 +33,13 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
         jq '.slaves[] | {hostname,active,resources}'
 ```
 
+Log message from a master connecting with a slave:
+
+```
+>>> grep -i 'registered agent' /var/log/mesos/mesos-master.INFO
+Registered agent ... at slave(1)@10.1.1.18:5051 (10.1.1.18) with cpus:1; mem:460; disk:35068; ports:[31000-32000]
+```
+
 ### Agents
 
 ```bash
