@@ -206,12 +206,15 @@ Node       | SLS                     | Description
 -----------|--------------------------|-----------------------
 lxcc0[1-3] | [mesos-master.sls][6]    | Master configuration
 ~          | [mesos-zookeeper.sls][7] | Connection to Zookeeper
+lxb00[1-4] | [mesos-slave.sls][8]    | Slave configuration
 
 ```bash
-# configure zookeeper on the nodes
-vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply mesos-*'
+# configure 
+vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply'
+vm ex lxcm01 -r 'salt lxb*.devops.test state.apply'
 ```
 
 [5]: srv/salt/zookeeper.sls
 [6]: srv/salt/mesos-master.sls
 [7]: srv/salt/mesos-zookeeper.sls
+[8]: srv/salt/mesos-slave.sls
