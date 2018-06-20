@@ -21,6 +21,16 @@ mesos_master_hostname:
     - name: /etc/mesos-master/hostname
     - contents: {{ grains['fqdn_ip4'] }}
 
+{% if salt['cmd.shell']('firewall-cmd --state') == 'running' %}
+mesos_firewall:
+  firewalld.present:
+    - name: public
+    - ports:
+      - 5050/tcp
+    - prune_services: False
+{% endif %}
+
+
 mesos_master_serice:
   service.running:
     - name: mesos-master.service
