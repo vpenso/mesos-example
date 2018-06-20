@@ -183,6 +183,8 @@ vm sy lxcm01 -r $MESOS_EXAMPLE/etc/salt/master :/etc/salt/
 vm sy lxcm01 -r $MESOS_EXAMPLE/srv/salt :/srv/
 # accept all Salt minions
 vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
+# configure all nodes
+vm ex lxcm01 -r 'salt -E lx* state.apply'
 ```
 
 ### Zookeeper
