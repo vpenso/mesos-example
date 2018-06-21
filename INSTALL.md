@@ -127,7 +127,7 @@ SLS                      | Description
 
 ```bash
 # configure zookeeper on the nodes
-vm ex lxcm01 -r 'salt -E lxcc state.apply zookeeper'
+vm ex lxcm01 -r -- salt -E lxcc state.apply zookeeper
 vm ex lxcm01 -r "salt -E '(lxcc|lxb)' state.apply mesos-zookeeper"
 # check if it is running
 vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
@@ -178,8 +178,8 @@ SLS                      | Description
 
 ```bash
 # configure masters/slaves 
-vm ex lxcm01 -r 'salt -E lxcc state.apply mesos-master'
-vm ex lxcm01 -r 'salt -E lxb state.apply mesos-slave'
+vm ex lxcm01 -r -- salt -E lxcc state.apply mesos-master
+vm ex lxcm01 -r -- salt -E lxb state.apply mesos-slave
 # check service status
 vm ex lxcm01 -r "salt '*' service.status mesos*"
 ```
