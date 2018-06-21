@@ -2,6 +2,7 @@ base:
   '*':
      - chronyd
      - salt-minion
+     - sysctl
      - systemd
   lxcc0[1-3].devops.test:
      - yum-mesos
