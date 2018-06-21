@@ -2,11 +2,18 @@ Cf. Zookeper Administrator's Guide:
 
 <https://zookeeper.apache.org/doc/current/>
 
-```
+```bash
 # check if all port are listening
-vm ex lxcc01 -r -- yum install -y nmap && nmap 10.1.1.9-11 -p 2181,2888,3888
+vm ex lxcc01 -r -- 
+        yum install -y nmap && nmap 10.1.1.9-11 -p 2181,2888,3888
 # find the leader node
-NODES=lxcc0[1-3] vn ex 'yum install -y nmap-ncat ; echo stat | nc 127.0.1.1 2181' | grep -e ^-- -e Mode
+NODES=lxcc0[1-3] vn ex '
+        yum install -y nmap-ncat
+        echo stat | nc 127.0.1.1 2181
+' | grep -e ^-- -e Mode
+# ..or
+NODES=lxcc0[1-3] vn ex \
+        'ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh status'
 ```
 
 ```bash
