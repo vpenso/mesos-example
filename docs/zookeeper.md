@@ -4,7 +4,7 @@ Cf. Zookeper Administrator's Guide:
 
 ```bash
 # check if all port are listening
-vm ex lxcc01 -r -- 
+vm ex lxcc01 -r -- \
         yum install -y nmap && nmap 10.1.1.9-11 -p 2181,2888,3888
 # find the leader node
 NODES=lxcc0[1-3] vn ex '
@@ -12,15 +12,14 @@ NODES=lxcc0[1-3] vn ex '
         echo stat | nc 127.0.1.1 2181
 ' | grep -e ^-- -e Mode
 # ..or
-NODES=lxcc0[1-3] vn ex \
-        'ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh status'
+NODES=lxcc0[1-3] vn ex '
+        ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh status
+'
 ```
 
 ```bash
 # logging configuration
 /etc/zookeeper/conf/log4j.properties               
-# check the state
-ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh status
 # start logging to console
 ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh start-foreground
 ```
