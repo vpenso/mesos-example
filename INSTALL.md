@@ -125,9 +125,10 @@ vm ex lxcm01 -r "salt -E '(lxcc|lxb)' state.apply mesos-zookeeper"
 vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
 ```
 
+Cf. [docs/zookeeper.md][11]
+
 ### Mesos
 
-Configuration with SaltStack:
 
 ```bash
 # configure the master nodes
@@ -147,6 +148,8 @@ NODES=lxb00[1-4] vn ex '
         #echo docker,mesos > /etc/mesos-slave/containerizers
 '
 ```
+
+Configuration with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
@@ -219,3 +222,4 @@ curl -s $MARATHON_URL/v2/apps \
 [8]:  srv/salt/mesos-slave.sls
 [9]:  srv/salt/firwalld.sls
 [10]: srv/salt/sysctl.sls
+[11]: docs/zookeeper.md
