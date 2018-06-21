@@ -173,6 +173,9 @@ NODES=lxcc0[1-3] vn ex '
 
 ## Usage
 
+
+Check the configuration and start all services:
+
 ```bash
 # enable and start required services on the mastes
 NODES=lxcc0[1-3] vn ex '
@@ -194,6 +197,8 @@ NODES=lxb00[1-4] vn ex '
 '
 ```
 
+Access the web-interfaces and start an example task:
+
 ```bash
 # web GUis
 $BROWSER http://$(vm ip lxcc01):5050
@@ -207,13 +212,6 @@ curl -s $MARATHON_URL/v2/apps \
      -d @$MESOS_EXAMPLE/var/marathon/apps/docker-http-server.json
 ```
 
-
-
-
-### Mesos
-
-
-```
 
 [5]:  srv/salt/zookeeper.sls
 [6]:  srv/salt/mesos-master.sls
