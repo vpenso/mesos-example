@@ -51,6 +51,6 @@ $BROWSER http://$(vm ip lxdev01):5050
 $BROWSER http://$(vm ip lxdev01):8080
 # open Chronos web GUI
 $BROWSER http://$(vm ip lxdev01):4400
-
+```
 
 [0]: https://github.com/vpenso/vm-tools
