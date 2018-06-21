@@ -24,7 +24,7 @@ Following example provides two options to setup the virtual machine listed above
 
 ### SaltStack
 
-_If required setup salt all all nodes._
+_If required setup Salt on all nodes._
 
 Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
 
@@ -78,7 +78,7 @@ vm ex lxcm01 -r 'salt -E lx* state.apply'
 
 ## Configuration
 
-Baisc configuration of all nodes:
+Basic configuration of all nodes:
 
 ```bash
 # add mesosphere RPM repo, disable IPv6 and security
@@ -221,12 +221,12 @@ SLS                      | Description
 -------------------------|-----------------------
 [marahton.sls][14]       | Marathon configuration
 
-Cf. [docs/marathon.md][12]
 
 ```bash
 vm ex lxcm01 -r -- salt -E lxcc state.apply marathon
 ```
 
+Cf. [docs/marathon.md][12]
 
 [0]:  https://github.com/vpenso/vm-tools 
 [5]:  srv/salt/zookeeper.sls

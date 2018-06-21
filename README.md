@@ -1,8 +1,6 @@
 **Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
 
-This example uses virtual machines setup with vm-tools:
-
-<https://github.com/vpenso/vm-tools>
+This example uses a virtual machine setup with [vm-tools][0]:
 
 ```bash
 # start a CentOS 7 VM instance
@@ -53,3 +51,6 @@ $BROWSER http://$(vm ip lxdev01):5050
 $BROWSER http://$(vm ip lxdev01):8080
 # open Chronos web GUI
 $BROWSER http://$(vm ip lxdev01):4400
+
+
+[0]: https://github.com/vpenso/vm-tools

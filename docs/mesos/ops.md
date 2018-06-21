@@ -29,14 +29,14 @@ Status information exposed by the HTTP API
 curl -s http://$MESOS_MASTER_IP_PORT/state | jq
 # master configuration (authentication/authorization)
 curl -s http://$MESOS_MASTER_IP_PORT/master/flags | jq
-# check agent state
-curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
-        jq '.slaves[] | {hostname,active,resources}'
 ```
 
 ### Agents
 
 ```bash
+# check agent state
+curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
+        jq '.slaves[] | {hostname,active,resources}'
 # check if the slave have registered with the master
 >>> NODES=lxb00[1-4] vn ex 'journalctl -u mesos-slave | grep -i registered'
 -- lxb001 --
@@ -106,14 +106,3 @@ mesos-execute --master=$(hostname -i):5050 \
 curl -s http://$MESOS_MASTER_IP_PORT/frameworks |\
         jq '.frameworks[] | {name,hostname,active}'
 ```
-
-## Trouble Shooting
-
-Mesos can not connect to the Zookeeper cluster:
-
-```bash
-...ZOO_ERROR...errno=111(Connection refused): server refused to accept the client
-```
-
-Make sure the firewall is not blocking access, and IP addresses and ports a correctly configured in `/etc/master/zk`
-
