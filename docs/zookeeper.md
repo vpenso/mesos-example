@@ -1,25 +1,31 @@
+Cf. Zookeper Administrator's Guide:
 
+<https://zookeeper.apache.org/doc/current/>
 
+```
+# check if all port are listening
+vm ex lxcc01 -r -- yum install -y nmap && nmap 10.1.1.9-11 -p 2181,2888,3888
+# find the leader node
+NODES=lxcc0[1-3] vn ex 'yum install -y nmap-ncat ; echo stat | nc 127.0.1.1 2181' | grep -e ^-- -e Mode
+```
 
 ```bash
-# start ZooKeeper
-systemctl restart zookeeper && systemctl status zookeeper
 # logging configuration
 /etc/zookeeper/conf/log4j.properties               
 # check the state
 ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh status
 # start logging to console
 ZOOCFGDIR=/etc/zookeeper/conf /opt/mesosphere/zookeeper/bin/zkServer.sh start-foreground
-# check the ports
-nmap 10.1.1.9-11 -p 2181,2888,3888
 ```
 
 Leader election in the logs:
+```bash
+>>> NODES=lxcc0[1-3] vn ex 'journalctl -u zookeeper | grep -iE "(lead|follow)ing.*election"'
+-- lxcc01 --
+...INFO  [QuorumPeer[myid=1]/0.0.0.0:2181:Follower@63] - FOLLOWING - LEADER ELECTION TOOK - 356723
+-- lxcc02 --
+...INFO  [QuorumPeer[myid=2]/0.0.0.0:2181:Follower@63] - FOLLOWING - LEADER ELECTION TOOK - 174
+-- lxcc03 --
+...INFO  [QuorumPeer[myid=3]/0.0.0.0:2181:Leader@358] - LEADING - LEADER ELECTION TOOK - 316
+```
 
-```
-Trying to create path '/mesos' in ZooKeeper
-Group process (zookeeper-group(2)@10.1.1.11:5050) connected to ZooKeeper
-...
-A new leading master (UPID=master@10.1.1.10:5050) is detected
-The newly elected leader is master@10.1.1.10:5050 with id 9d75cf51-dc4e-4561-8e10-fa318c421136
-```
