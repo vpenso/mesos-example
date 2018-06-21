@@ -37,3 +37,12 @@ curl -s $MARATHON_URL/v2/apps/<app-name> | jq '.app.cmd'
 # delete an app
 curl -s -X DELETE $MARATHON_URL/v2/apps/<app-name> | jq '.'
 ```
+
+Start an HTTP server from a Docker image: 
+
+```bash
+curl -s $MARATHON_URL/v2/apps \
+     -X POST \
+     -H "Content-type: application/json" \
+     -d @$MESOS_EXAMPLE/var/marathon/apps/docker-http-server.json
+```

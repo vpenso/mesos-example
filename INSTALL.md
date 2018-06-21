@@ -108,6 +108,14 @@ do
 done
 # configure the Zookeeper end-points for all Mesos nodes
 vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
+# check the configuration
+NODES=lxcc0[1-3] vn ex '
+        tail -n+1 /var/lib/zookeeper/myid \
+                  /etc/mesos/zk
+        grep server /etc/zookeeper/conf/zoo.cfg /dev/null
+        systemctl enable --now zookeeper
+        systemctl status zookeeper
+'
 ```
 
 Configuration with SaltStack:
@@ -145,7 +153,19 @@ NODES=lxb00[1-4] vn ex '
         systemctl disable --now mesos-master
         hostname -i > /etc/mesos-slave/ip
         cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
-        #echo docker,mesos > /etc/mesos-slave/containerizers
+        echo mesos,docker > /etc/mesos-slave/containerizers
+'
+# enable and start required services on the mastes
+NODES=lxcc0[1-3] vn ex '
+        tail -n+1 /etc/mesos-master/{quorum,ip,hostname}
+        systemctl enable --now mesos-master
+        systemctl status mesos-master
+'
+# enable and start required serices on the slaves
+NODES=lxb00[1-4] vn ex '
+        tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}
+        systemctl enable --now docker mesos-slave
+        systemctl status docker mesos-slave
 '
 ```
 
@@ -176,49 +196,16 @@ NODES=lxcc0[1-3] vn ex '
         echo -e "MARATHON_MASTER=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/default/marathon
         echo -e "MARATHON_ZK=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/marathon" >> /etc/default/marathon
 '
-```
-
-## Usage
-
-
-Check the configuration and start all services:
-
-```bash
 # enable and start required services on the mastes
 NODES=lxcc0[1-3] vn ex '
-        tail -n+1 /etc/mesos-master/{quorum,ip,hostname} \
-                  /etc/mesos/zk \
-                  /var/lib/zookeeper/myid \
-                  /etc/marathon/conf/{hostname,master} \
+        tail -n+1 /etc/marathon/conf/{hostname,master} \
                   /etc/default/marathon
-        grep server /etc/zookeeper/conf/zoo.cfg /dev/null
-        systemctl enable --now zookeeper mesos-master marathon
-        systemctl status zookeeper mesos-master marathon
-'
-# enable and start required serices on the slaves
-NODES=lxb00[1-4] vn ex '
-        tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}\
-                  /etc/mesos/zk
-        systemctl enable --now docker mesos-slave
-        systemctl status docker mesos-slave
+        systemctl enable --now marathon
+        systemctl status marathon
 '
 ```
 
-Access the web-interfaces and start an example task:
-
-```bash
-# web GUis
-$BROWSER http://$(vm ip lxcc01):5050
-$BROWSER http://$(vm ip lxcc01):8080
-# environment
-export MARATHON_URL=http://$(vm ip lxcc01):8080
-# start an example application
-curl -s $MARATHON_URL/v2/apps \
-     -X POST \
-     -H "Content-type: application/json" \
-     -d @$MESOS_EXAMPLE/var/marathon/apps/docker-http-server.json
-```
-
+Cf. [docs/marathon.md][12]
 
 [5]:  srv/salt/zookeeper.sls
 [6]:  srv/salt/mesos-master.sls
@@ -227,4 +214,5 @@ curl -s $MARATHON_URL/v2/apps \
 [9]:  srv/salt/firwalld.sls
 [10]: srv/salt/sysctl.sls
 [11]: docs/zookeeper.md
+[12]: docs/marathon.md
 [13]: docs/mesos/ops.md

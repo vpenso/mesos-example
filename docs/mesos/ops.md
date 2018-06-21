@@ -7,6 +7,8 @@
 ### Master
 
 ```bash
+# open the web GUI in our default browser
+$BROWSER http://$MESOS_MASTER_IP_PORT
 # show all default configurations
 tail -n+1 /etc/default/mesos*  /etc/mesos-*/*       
 # start master daemon in foreground 
