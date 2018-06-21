@@ -9,18 +9,17 @@
 ```bash
 # open the web GUI in our default browser
 $BROWSER http://$MESOS_MASTER_IP_PORT
-# show all default configurations
-tail -n+1 /etc/default/mesos*  /etc/mesos-*/*       
 # start master daemon in foreground 
-mesos-master --ip=$(hostname -i) \
-             --work_dir=/var/lib/mesos \
-             --quorum=2 \
-             --zk=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos \
-             --zk_session_timeout=10secs
-# tail the log continuously
-journalctl -fu mesos-master
-# leader election
-mesos-resolve $(cat /etc/mesos/zk)
+vm ex lxcc01 -r '
+        systemctl stop mesos-master
+        mesos-master --ip=$(hostname -i) \
+                     --work_dir=/var/lib/mesos \
+                     --quorum=2 \
+                     --zk=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos \
+                     --zk_session_timeout=10secs
+'
+# force leader election
+vm ex lxcc01 -r 'mesos-resolve $(cat /etc/mesos/zk)'
 ```
 
 Status information exposed by the HTTP API
@@ -37,7 +36,7 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
 
 ### Agents
 
-```
+```bash
 # check if the slave have registered with the master
 >>> NODES=lxb00[1-4] vn ex 'journalctl -u mesos-slave | grep -i registered'
 -- lxb001 --
