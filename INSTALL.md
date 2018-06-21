@@ -160,7 +160,11 @@ SLS                      | Description
 # configure masters/slaves 
 vm ex lxcm01 -r 'salt -E lxcc state.apply mesos-master'
 vm ex lxcm01 -r 'salt -E lxb state.apply mesos-slave'
+# check service status
+vm ex lxcm01 -r "salt '*' service.status mesos*"
 ```
+
+Cf. [docs/mesos/ops.md][13]
 
 ###  Marathon
 
@@ -223,3 +227,4 @@ curl -s $MARATHON_URL/v2/apps \
 [9]:  srv/salt/firwalld.sls
 [10]: srv/salt/sysctl.sls
 [11]: docs/zookeeper.md
+[13]: docs/mesos/ops.md
