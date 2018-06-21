@@ -4,6 +4,7 @@ base:
      - salt-minion
      - sysctl
      - systemd
+     - firewalld
   lxcc0[1-3].devops.test:
      - yum-mesos
      - zookeeper

@@ -23,7 +23,7 @@ mesos_master_hostname:
     - contents: {{ grains['fqdn_ip4'] }}
 
 {% if salt['cmd.shell']('firewall-cmd --state') == 'running' %}
-mesos_matser_firewall:
+mesos_master_firewall:
   firewalld.present:
     - name: public
     - ports:
