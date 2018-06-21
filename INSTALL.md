@@ -21,13 +21,59 @@ lxcm01           | SaltStack master
 lxcc0[1-3]       | Zookeeper & Mesos Scheduler
 lxb00[1-4]       | Mesos Agents & Docker
 
-# Manual Install
+### SaltStack
 
-Manual installation of a Mesos CLuster.
+Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
 
-### Configuration
+[spr]: https://docs.saltstack.com/en/latest/topics/installation/rhel.html
 
-Configure Mesos on all nodes:
+```bash
+>>> cat /etc/yum.repos.d/salt.repo
+[saltstack-repo]
+name=SaltStack repo for Red Hat Enterprise Linux $releasever
+baseurl=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
+       https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
+```
+
+Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
+
+```bash
+# install the SaltStack master
+vm ex lxcm01 -r '
+        yum install -y salt-master;
+        firewall-cmd --permanent --zone=public --add-port=4505-4506/tcp;
+        firewall-cmd --reload;
+        systemctl enable --now salt-master && systemctl status salt-master
+'
+# install the SaltStack minions on all nodes
+vn ex '
+        yum install -y salt-minion;
+        echo "master: 10.1.1.7" > /etc/salt/minion;
+        systemctl enable --now salt-minion && systemctl status salt-minion
+'
+```
+
+Sync the **Salt configuration** to the master:
+
+* [srv/salt/](srv/salt/) - The **state tree** includes all SLS (SaLt State file) representing the state in which all nodes should be
+* [etc/salt/master](etc/salt/master) - Salt master configuration (`file_roots` defines to location of the state tree)
+* [srv/salt/top.sls](srv/salt/top.sls) - Maps nodes to SLS configuration files (cf. [top file](https://docs.saltstack.com/en/latest/ref/states/top.html))
+
+```bash
+# upload the salt-master service configuration files
+vm sy lxcm01 -r $MESOS_EXAMPLE/etc/salt/master :/etc/salt/
+# upload the salt configuration reposiotry
+vm sy lxcm01 -r $MESOS_EXAMPLE/srv/salt :/srv/
+# accept all Salt minions
+vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
+# configure all nodes
+vm ex lxcm01 -r 'salt -E lx* state.apply'
+```
+
+## Configuration
 
 ```bash
 # add mesosphere RPM repo, disable IPv6 and security
@@ -38,6 +84,45 @@ vn ex '
         systemctl disable --now firewalld
         setenforce 0 && sestatus
 '
+```
+
+### Zookeeper
+
+```bash
+# configure the master nodes
+for i in 1 2 3
+do
+        NODES=lxcc0$i vn ex "
+                echo $i > /var/lib/zookeeper/myid
+                echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
+                echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
+                echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
+        "
+done
+# configure the Zookeeper end-points for all Mesos nodes
+vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
+```
+
+Configuration with SaltStack:
+
+SLS                      | Description
+-------------------------|-----------------------
+[zookeeper.sls][5]       | Zookeeper cluster configuration
+[mesos-zookeeper.sls][7] | Connection to Zookeeper by `mesos-{master,slave}`
+
+```bash
+# configure zookeeper on the nodes
+vm ex lxcm01 -r 'salt -E lxcc state.apply zookeeper'
+vm ex lxcm01 -r "salt -E '(lxcc|lxb)' state.apply mesos-zookeeper"
+# check if it is running
+vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
+```
+
+### Mesos
+
+Configuration with SaltStack:
+
+```
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
         yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
@@ -56,25 +141,17 @@ NODES=lxb00[1-4] vn ex '
 '
 ```
 
-Configure ZooKeeper on the cluster:
+SLS                      | Description
+-------------------------|-----------------------
+[mesos-master.sls][6]    | Master configuration
+[mesos-slave.sls][8]     | Slave configuration
 
 ```bash
-# configure the master nodes
-for i in 1 2 3
-do
-        NODES=lxcc0$i vn ex "
-                echo $i > /var/lib/zookeeper/myid
-                echo server.1=10.1.1.9:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
-                echo server.2=10.1.1.10:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
-                echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
-        "
-done
-# configure the Zookeeper end-points for all Mesos nodes
-vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
-```
+# configure masters/slaves 
+vm ex lxcm01 -r 'salt -E lxcc state.apply mesos-master'
+vm ex lxcm01 -r 'salt -E lxb state.apply mesos-slave'
 
-
-Configure Marathon:
+###  Marathon
 
 ```bash
 NODES=lxcc0[1-3] vn ex '
@@ -86,7 +163,7 @@ NODES=lxcc0[1-3] vn ex '
 '
 ```
 
-### Operations
+## Usage
 
 ```bash
 # enable and start required services on the mastes
@@ -109,8 +186,6 @@ NODES=lxb00[1-4] vn ex '
 '
 ```
 
-### Usage
-
 ```bash
 # web GUis
 $BROWSER http://$(vm ip lxcc01):5050
@@ -127,93 +202,9 @@ curl -s $MARATHON_URL/v2/apps \
 
 
 
-# SaltStack Install
-
-Use SaltStack to deploy the Mesos Cluster.
-
-### Prerequisites
-
-Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
-
-[spr]: https://docs.saltstack.com/en/latest/topics/installation/rhel.html
-
-```bash
->>> cat /etc/yum.repos.d/salt.repo
-[saltstack-repo]
-name=SaltStack repo for Red Hat Enterprise Linux $releasever
-baseurl=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
-enabled=1
-gpgcheck=1
-gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
-       https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
-```
-
-### Deployment
-
-Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
-
-```bash
-# install the SaltStack master
-vm ex lxcm01 -r '
-        yum install -y salt-master;
-        firewall-cmd --permanent --zone=public --add-port=4505-4506/tcp;
-        firewall-cmd --reload;
-        systemctl enable --now salt-master && systemctl status salt-master
-'
-# install the SaltStack minions on all nodes
-vn ex '
-        yum install -y salt-minion;
-        echo "master: 10.1.1.7" > /etc/salt/minion;
-        systemctl enable --now salt-minion && systemctl status salt-minion
-'
-```
-
-## Configuration
-
-Sync the Salt configuration to the master:
-
-* [srv/salt/](srv/salt/) - The **state tree** includes all SLS (SaLt State file) representing the state in which all nodes should be
-* [etc/salt/master](etc/salt/master) - Salt master configuration (`file_roots` defines to location of the state tree)
-* [srv/salt/top.sls](srv/salt/top.sls) - Maps nodes to SLS configuration files (cf. [top file](https://docs.saltstack.com/en/latest/ref/states/top.html))
-
-```bash
-# upload the salt-master service configuration files
-vm sy lxcm01 -r $MESOS_EXAMPLE/etc/salt/master :/etc/salt/
-# upload the salt configuration reposiotry
-vm sy lxcm01 -r $MESOS_EXAMPLE/srv/salt :/srv/
-# accept all Salt minions
-vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
-# configure all nodes
-vm ex lxcm01 -r 'salt -E lx* state.apply'
-```
-
-### Zookeeper
-
-Node       | SLS                  | Description
------------|----------------------|-----------------------
-lxcc0[1-3] | [zookeeper.sls][5]   | Zookeeper cluster configuration
-
-
-```bash
-# configure zookeeper on the nodes
-vm ex lxcm01 -r 'salt lxcc*.devops.test state.apply zookeeper'
-# check if it is running
-vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
-```
-
 ### Mesos
 
 
-Node       | SLS                     | Description
------------|--------------------------|-----------------------
-lxcc0[1-3] | [mesos-master.sls][6]    | Master configuration
-~          | [mesos-zookeeper.sls][7] | Connection to Zookeeper
-lxb00[1-4] | [mesos-slave.sls][8]    | Slave configuration
-
-```bash
-# configure masters/slaves 
-vm ex lxcm01 -r 'salt -E lxcc* state.apply mesos-master'
-vm ex lxcm01 -r 'salt -E lxb* state.apply'
 ```
 
 [5]: srv/salt/zookeeper.sls
