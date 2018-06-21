@@ -10,6 +10,7 @@ base:
      - zookeeper
      - mesos-zookeeper
      - mesos-master
+     - marathon
   lxb00[1-4].devops.test:
      - yum-mesos
      - docker

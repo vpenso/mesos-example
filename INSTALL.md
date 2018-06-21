@@ -106,12 +106,9 @@ do
                 echo server.3=10.1.1.11:2888:3888 >> /etc/zookeeper/conf/zoo.cfg
         "
 done
-# configure the Zookeeper end-points for all Mesos nodes
-vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
 # check the configuration
 NODES=lxcc0[1-3] vn ex '
-        tail -n+1 /var/lib/zookeeper/myid \
-                  /etc/mesos/zk
+        tail -n+1 /var/lib/zookeeper/myid
         grep server /etc/zookeeper/conf/zoo.cfg /dev/null
         systemctl enable --now zookeeper
         systemctl status zookeeper
@@ -123,12 +120,10 @@ Configuration with SaltStack:
 SLS                      | Description
 -------------------------|-----------------------
 [zookeeper.sls][5]       | Zookeeper cluster configuration
-[mesos-zookeeper.sls][7] | Connection to Zookeeper by `mesos-{master,slave}`
 
 ```bash
 # configure zookeeper on the nodes
 vm ex lxcm01 -r -- salt -E lxcc state.apply zookeeper
-vm ex lxcm01 -r "salt -E '(lxcc|lxb)' state.apply mesos-zookeeper"
 # check if it is running
 vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
 ```
@@ -155,15 +150,19 @@ NODES=lxb00[1-4] vn ex '
         cp /etc/mesos-slave/ip /etc/mesos-slave/hostname
         echo mesos,docker > /etc/mesos-slave/containerizers
 '
+# configure the Zookeeper end-points for all Mesos nodes
+vn ex 'echo "zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/mesos/zk'
 # enable and start required services on the mastes
 NODES=lxcc0[1-3] vn ex '
-        tail -n+1 /etc/mesos-master/{quorum,ip,hostname}
+        tail -n+1 /etc/mesos-master/{quorum,ip,hostname} \
+                  /etc/mesos/zk
         systemctl enable --now mesos-master
         systemctl status mesos-master
 '
 # enable and start required serices on the slaves
 NODES=lxb00[1-4] vn ex '
-        tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers}
+        tail -n+1 /etc/mesos-slave/{ip,hostname,containerizers} \
+                  /etc/mesos/zk
         systemctl enable --now docker mesos-slave
         systemctl status docker mesos-slave
 '
@@ -173,11 +172,13 @@ Configuration with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
+[mesos-zookeeper.sls][7] | Connection to Zookeeper by `mesos-{master,slave}`
 [mesos-master.sls][6]    | Master configuration
 [mesos-slave.sls][8]     | Slave configuration
 
 ```bash
 # configure masters/slaves 
+vm ex lxcm01 -r "salt -E '(lxcc|lxb)' state.apply mesos-zookeeper"
 vm ex lxcm01 -r -- salt -E lxcc state.apply mesos-master
 vm ex lxcm01 -r -- salt -E lxb state.apply mesos-slave
 # check service status
@@ -205,7 +206,18 @@ NODES=lxcc0[1-3] vn ex '
 '
 ```
 
+Configuration with SaltStack:
+
+SLS                      | Description
+-------------------------|-----------------------
+[marahton.sls][14]       | Marathon configuration
+
 Cf. [docs/marathon.md][12]
+
+```bash
+vm ex lxcm01 -r -- salt -E lxcc state.apply marathon
+```
+
 
 [5]:  srv/salt/zookeeper.sls
 [6]:  srv/salt/mesos-master.sls
@@ -216,3 +228,4 @@ Cf. [docs/marathon.md][12]
 [11]: docs/zookeeper.md
 [12]: docs/marathon.md
 [13]: docs/mesos/ops.md
+[14]: srv/salt/marathon.sls
