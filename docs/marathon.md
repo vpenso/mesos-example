@@ -1,4 +1,3 @@
-
 # Marathon 
 
 Mesos framework designed to launch **long-running applications** (services).
