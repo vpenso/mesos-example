@@ -86,6 +86,13 @@ vn ex '
 '
 ```
 
+Configuration with SaltStack:
+
+SLS                      | Description
+-------------------------|-----------------------
+[firewalld.sls][9]       | Disable the firewall
+[sysctl.sls][10]         | Disable IPv6 networking
+
 ### Zookeeper
 
 ```bash
@@ -122,7 +129,7 @@ vm ex lxcm01 -r 'salt lxcc*.devops.test service.status zookeeper'
 
 Configuration with SaltStack:
 
-```
+```bash
 # configure the master nodes
 NODES=lxcc0[1-3] vn ex '
         yum -y install -q --enablerepo=mesosphere mesos mesosphere-zookeeper marathon
@@ -150,6 +157,7 @@ SLS                      | Description
 # configure masters/slaves 
 vm ex lxcm01 -r 'salt -E lxcc state.apply mesos-master'
 vm ex lxcm01 -r 'salt -E lxb state.apply mesos-slave'
+```
 
 ###  Marathon
 
@@ -207,7 +215,9 @@ curl -s $MARATHON_URL/v2/apps \
 
 ```
 
-[5]: srv/salt/zookeeper.sls
-[6]: srv/salt/mesos-master.sls
-[7]: srv/salt/mesos-zookeeper.sls
-[8]: srv/salt/mesos-slave.sls
+[5]:  srv/salt/zookeeper.sls
+[6]:  srv/salt/mesos-master.sls
+[7]:  srv/salt/mesos-zookeeper.sls
+[8]:  srv/salt/mesos-slave.sls
+[9]:  srv/salt/firwalld.sls
+[10]: srv/salt/sysctl.sls
