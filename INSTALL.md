@@ -1,10 +1,6 @@
-This example uses virtual machines setup with **vm-tools**:
+The shell **script [source_me.sh](source_me.sh)** adds the tool-chain in this repository to your shell environment:
 
-<https://github.com/vpenso/vm-tools>
-
-The shell script [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
-
-Provision all required virtual machine instances with vm-tools:
+Provision all required virtual machine instances with [vm-tools][0]:
 
 ```bash
 # start new VM instances using `centos7` as source image
@@ -18,10 +14,17 @@ List of required virtual machines and services:
 Nodes            | Description
 -----------------|---------------------
 lxcm01           | SaltStack master
-lxcc0[1-3]       | Zookeeper & Mesos Scheduler
-lxb00[1-4]       | Mesos Agents & Docker
+lxcc0[1-3]       | Zookeeper, Mesos Masters, and Marathon 
+lxb00[1-4]       | Mesos Agents, and Docker
+
+Following example provides two options to setup the virtual machine listed above:
+
+1. Configure the machines **manually**
+2. Use **Saltstack** to configure all machines
 
 ### SaltStack
+
+_If required setup salt all all nodes._
 
 Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
 
@@ -75,6 +78,8 @@ vm ex lxcm01 -r 'salt -E lx* state.apply'
 
 ## Configuration
 
+Baisc configuration of all nodes:
+
 ```bash
 # add mesosphere RPM repo, disable IPv6 and security
 vn ex '
@@ -94,6 +99,8 @@ SLS                      | Description
 [sysctl.sls][10]         | Disable IPv6 networking
 
 ### Zookeeper
+
+Configure Zookeeper:
 
 ```bash
 # configure the master nodes
@@ -115,7 +122,7 @@ NODES=lxcc0[1-3] vn ex '
 '
 ```
 
-Configuration with SaltStack:
+Configuration Zookeeper with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
@@ -132,6 +139,7 @@ Cf. [docs/zookeeper.md][11]
 
 ### Mesos
 
+Configure Mesos (masters/slaves) on all nodes:
 
 ```bash
 # configure the master nodes
@@ -168,7 +176,7 @@ NODES=lxb00[1-4] vn ex '
 '
 ```
 
-Configuration with SaltStack:
+Configuration Mesos with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
@@ -189,11 +197,12 @@ Cf. [docs/mesos/ops.md][13]
 
 ###  Marathon
 
+Configure Marathon:
+
 ```bash
 NODES=lxcc0[1-3] vn ex '
         mkdir -p /etc/marathon/conf
         cp /etc/mesos-master/hostname /etc/marathon/conf
-        cp /etc/mesos/zk /etc/marathon/conf/master
         echo -e "MARATHON_MASTER=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos" > /etc/default/marathon
         echo -e "MARATHON_ZK=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/marathon" >> /etc/default/marathon
 '
@@ -206,7 +215,7 @@ NODES=lxcc0[1-3] vn ex '
 '
 ```
 
-Configuration with SaltStack:
+Configuration Marathon with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
@@ -219,6 +228,7 @@ vm ex lxcm01 -r -- salt -E lxcc state.apply marathon
 ```
 
 
+[0]:  https://github.com/vpenso/vm-tools 
 [5]:  srv/salt/zookeeper.sls
 [6]:  srv/salt/mesos-master.sls
 [7]:  srv/salt/mesos-zookeeper.sls
