@@ -1,3 +1,5 @@
+# High-Available Mesos Cluster
+
 The shell **script [source_me.sh](source_me.sh)** adds the tool-chain in this repository to your shell environment:
 
 List of required virtual machines and services:
@@ -17,15 +19,12 @@ Provision all required virtual machine instances with [vm-tools][0]:
 >>> vn r
 ```
 
-
 Following example provides two options to setup the virtual machine listed above:
 
 1. Configure the machines **manually**
 2. Use **Saltstack** to configure all machines
 
-### SaltStack
-
-_If required setup Salt on all nodes._
+__If required setup Salt on all nodes.__
 
 Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
 
@@ -42,7 +41,7 @@ gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTST
        https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
 ```
 
-Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
+**Install Saltstack** on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
 
 ```bash
 # install the SaltStack master
@@ -60,7 +59,7 @@ vn ex '
 '
 ```
 
-Sync the **Salt configuration** to the master:
+**Sync the Salt configuration** to the master:
 
 * [srv/salt/](srv/salt/) - The **state tree** includes all SLS (SaLt State file) representing the state in which all nodes should be
 * [etc/salt/master](etc/salt/master) - Salt master configuration (`file_roots` defines to location of the state tree)
@@ -220,7 +219,7 @@ Configuration Marathon with SaltStack:
 
 SLS                      | Description
 -------------------------|-----------------------
-[marahton.sls][14]       | Marathon configuration
+[marathon.sls][14]       | Marathon configuration
 
 
 ```bash
