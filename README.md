@@ -93,7 +93,7 @@ High-Availability:
   - Backup masters in case of failure
   - Master **election** with Apache Zookeeper
 
-Frameworks (== pluggable schedulers):
+**Frameworks** (== pluggable schedulers):
 
 * User-land interface for distributed applications
 * Receive **resource offers** from Mesos, accept/reject offer, dispatch tasks
@@ -105,11 +105,6 @@ Frameworks (== pluggable schedulers):
   - Batch jobs (sequential/parallel)
 
 ## Ecosystem
-
-Apache Mesos][1] - OpenSource cluster resource manager system
-
-- Distributed system kernel, abstract resource pool (CPUs, memory, etc)
-- API for resource management across datacenters and/or cloud providers
 
 [Mesosphere][3] - Company offering DC/OS and heavily contributing to Mesos
 
@@ -123,11 +118,11 @@ Apache Mesos][1] - OpenSource cluster resource manager system
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible.
 
-Frameworks (application schedulers) build onto of Mesos:
+Frameworks (application schedulers) build on top of Mesos:
 
 <https://mesos.apache.org/documentation/latest/frameworks/>
 
-Other systems build for container orchestration:
+Other container orchestration systems:
 
 - [Kubernetes][8]
 - [Nomad][9]
