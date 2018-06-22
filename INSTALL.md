@@ -1,5 +1,13 @@
 The shell **script [source_me.sh](source_me.sh)** adds the tool-chain in this repository to your shell environment:
 
+List of required virtual machines and services:
+
+Nodes            | Description
+-----------------|---------------------
+lxcm01           | SaltStack master
+lxcc0[1-3]       | Zookeeper, Mesos Masters, and Marathon 
+lxb00[1-4]       | Mesos Agents, and Docker
+
 Provision all required virtual machine instances with [vm-tools][0]:
 
 ```bash
@@ -9,13 +17,6 @@ Provision all required virtual machine instances with [vm-tools][0]:
 >>> vn r
 ```
 
-List of required virtual machines and services:
-
-Nodes            | Description
------------------|---------------------
-lxcm01           | SaltStack master
-lxcc0[1-3]       | Zookeeper, Mesos Masters, and Marathon 
-lxb00[1-4]       | Mesos Agents, and Docker
 
 Following example provides two options to setup the virtual machine listed above:
 

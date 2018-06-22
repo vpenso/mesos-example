@@ -1,5 +1,13 @@
 # Apache Mesos Cluster with SaltStack 
 
+Component     | Description                             | CF.
+--------------|-----------------------------------------|----------------------------
+CentOS 7      | Operating system                        | https://www.centos.org
+SaltStack     | Infrastructure orchestration            | https://saltstack.com
+Mesos         | Resource orchestration                  | https://mesos.apache.org
+Marathon      | Container orchestration (service)       | https://mesosphere.github.io/marathon
+Chronos       | Container orchestration (peridic jobs)  | https://mesos.github.io/chronos/
+
 **Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
 
 This example uses a virtual machine setup with [vm-tools][0]:
@@ -11,9 +19,7 @@ vm s centos7 lxdev01
 vm lo lxdev01 -r
 ```
 
-### Configuration
-
-Install Zookeeper, Mesos, Marathon and Chronis on a single node:
+**Install Zookeeper, Mesos, Marathon and Chronos on a single node**
 
 ```bash
 ## -- CentOS --##
@@ -39,10 +45,6 @@ firewall-cmd --permanent --zone=public --add-port=8080/tcp # marathon
 firewall-cmd --permanent --zone=public --add-port=4400/tcp # chronos
 firewall-cmd --reload
 ```
-
-Operational details cf. [docs/mesos/ops.md](docs/mesos/ops.md)
-
-### Usage
 
 Use the web-interfaces to start tasks:
 
