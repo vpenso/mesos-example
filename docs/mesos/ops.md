@@ -48,46 +48,6 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
 -- lxb004 --
 ...Registered with master master@10.1.1.9:5050; given agent ID...
 ```
-
-### Tasks
-
-Launch tasks from the **Mesos master**:
-
-```bash
-# as simple as possible
-mesos-execute --master=$(hostname -i):5050 \
-              --name=sleep \
-              --command='echo sleep... ; sleep 15'
-# specify resources and the containerizer
-mesos-execute --master=$(hostname -i):5050 \
-              --name=sleep \
-              --containerizer=mesos \
-              --resources='cpus:0.1;mem:32' \
-              --command='echo sleep... ; sleep 300'
-# process hierarchy on the agent node 
-/usr/sbin/mesos-slave ...
-...
-  /usr/libexec/mesos/mesos-containerizer launch
-    mesos-executor --launcher_dir=/usr/libexec/mesos
-      sh -c echo sleep
-```
-
-A task with a simple docker container:
-
-```bash
-mesos-execute --master=$(hostname -i):5050 \
-              --name=sleep \
-              --containerizer=docker \
-              --docker_image='busybox:latest' \
-              --resources='cpus:0.5;mem:128' \
-              --command='echo sleep... ; sleep 300'
-# process hierarchy on the agent node 
-/usr/sbin/mesos-slave ...
-  ...
-  mesos-docker-executor ...
-    /usr/bin/docker-current -H unix:///var/run/docker.sock ... busybox:latest -c echo sleep... ; sleep 300
-```
-
 ### Frameworks
 
 ```bash
