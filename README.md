@@ -1,3 +1,5 @@
+# Apache Mesos Cluster with SaltStack 
+
 **Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
 
 This example uses a virtual machine setup with [vm-tools][0]:
