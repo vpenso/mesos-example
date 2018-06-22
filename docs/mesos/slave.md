@@ -118,14 +118,14 @@ docker executor       | launches docker container (instead of a command)
 default executor      | (v1 API) capable of running **pods** (task groups)
 custom executor       | build to handle custom workloads
 
+For example, start a simple task and identify the slave node it executes on:
+
 ```bash
-# start a simple task 
 >>> vm lo lxcc01 -r '
         mesos-execute --master=$(hostname -i):5050 \
                       --containerizer=mesos \
                       --name=sleep \
-                      --command="echo sleep... ; sleep 300"
-'
+                      --command="echo sleep... ; sleep 5000" '
 ...
 Submitted task 'sleep' to agent '96e29ec4-9c04-4ed7-b72e-9016a64f4903-S2'
 ...
@@ -136,16 +136,37 @@ Submitted task 'sleep' to agent '96e29ec4-9c04-4ed7-b72e-9016a64f4903-S2'
   "hostname": "10.1.1.18"
 }
 ...
-# list the process hierarchy on the slave node
->>> vm lo $(vm name 10.1.1.18) -r '
-  ps -A --forest -o command= | grep ^/usr/sbin/mesos-slave -A6
-'
+```
+
+List the process hierarchy on the slave node using the corresponding IP address:
+
+```bash
+>>> vm lo $(vm hn 10.1.1.18) -r 'ps -A --forest -o command= | grep ^/usr/sbin/mesos-slave -A6'
 /usr/sbin/mesos-slave ...
  \_ /usr/libexec/mesos/mesos-containerizer launch
      \_ mesos-executor --launcher_dir=/usr/libexec/mesos
          \_ sh -c echo sleep... ; sleep 5000
              \_ sleep 5000
 ```
+
+Similar task using a Docker container
+
+```bash
+>>> vm lo lxcc01 -r '
+        mesos-execute --master=$(hostname -i):5050 \
+                      --name=sleep \
+                      --containerizer=docker \
+                      --docker_image=busybox:latest \
+                      --resources="cpus:0.5;mem:128" \
+                      --command="echo sleep... ; sleep 5000" '
+# list the process hierarchy 
+>>> vm lo $(vm hn 10.1.1.16) -r 'ps -A --forest -o command= | grep ^/usr/sbin/mesos-slave -A4'
+/usr/sbin/mesos-slave ..
+ ...
+ \_ mesos-docker-executor ... --docker_socket=/var/run/docker.sock ... --launcher_dir=/usr/libexec/mesos ...
+     \_ /usr/bin/docker-current ... busybox:latest -c echo sleep... ; sleep 5000
+```
+
 
 
 [1]: https://mesos.apache.org/documentation/attributes-resources/
