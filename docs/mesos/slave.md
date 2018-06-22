@@ -26,6 +26,38 @@ Node specifics advertised to the master by slave resources and slave attributes:
 
 <https://mesos.apache.org/documentation/attributes-resources/>
 
+```bash
+# read attributes and resources for a given node from hte HTTP API 
+>>> curl -s http://$(vm ip lxb001):$MESOS_SLAVE_PORT/state |\
+        jq '{resources,attributes}'
+{
+  "resources": {
+    "disk": 35068,
+    "mem": 460,
+    "gpus": 0,
+    "cpus": 1,
+    "ports": "[31000-32000]"
+  },
+  "attributes": {}
+}
+# add an attribute to the configuration, and restart the mesos slave
+>>> vm ex lxb001 -r '
+        echo os:centos7 > /etc/mesos-slave/attributes
+        # delete the latest slave recovery configuration
+        rm -rf /var/lib/mesos/meta/slaves/latest
+        systemctl restart mesos-slave
+'
+# the mesos-slave starts with the --attributes argument
+>>> vm ex lxb001 -r 'ps --no-headers -o command -p $(pgrep mesos-slave) | sed "s/ /\n\t/g"'
+/usr/sbin/mesos-slave
+	--master=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos
+	--log_dir=/var/log/mesos
+	--attributes=os:centos7
+	--containerizers=docker,mesos
+	--hostname=10.1.1.15
+	--ip=10.1.1.15
+	--work_dir=/var/lib/mesos
+```
 
 
 ### Executor
