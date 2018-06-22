@@ -24,9 +24,26 @@ Node specifics advertised to the master by slave resources and slave attributes:
 * Resources - CPUs, memory, disks, ports, etc. allocated for frameworks and consumed by a task
 * Attributes - Identify slaves with some information (environment, software, network, etc.) interpreted by frameworks
 
+```
+# read attributes and resources for a given node from hte HTTP API 
+>>> curl -S HTTP://$(vm ip lxb001):$MESOS_SLAVE_PORT/state | jq '{resources,attributes}'
+{
+  "resources": {
+    "disk": 35068,
+    "mem": 460,
+    "gpus": 0,
+    "cpus": 1,
+    "ports": "[31000-32000]"
+  },
+  "attributes": {}
+}
+```
+
+Cf. [Mesos Attributes & Resources][1], [Slave Recovery in Apache Mesos][2]
+
 <https://mesos.apache.org/documentation/attributes-resources/>
 
-```
+```bash
 # pass the configuration as argument 
 mesos-slave \
         --resources='cpus:24;mem:122880;disk:921600;ports:[21000-29000]' \
@@ -39,19 +56,6 @@ mesos-slave \
 Simple configuration example
 
 ```bash
-# read attributes and resources for a given node from hte HTTP API 
->>> curl -s http://$(vm ip lxb001):$MESOS_SLAVE_PORT/state |\
-        jq '{resources,attributes}'
-{
-  "resources": {
-    "disk": 35068,
-    "mem": 460,
-    "gpus": 0,
-    "cpus": 1,
-    "ports": "[31000-32000]"
-  },
-  "attributes": {}
-}
 # add an attribute to the configuration, and restart the mesos slave
 >>> vm ex lxb001 -r '
         echo "os:centos7;rack:3" > /etc/mesos-slave/attributes
@@ -121,3 +125,6 @@ NODES=lxb00[1-4] vn ex '
         systemctl restart mesos-slave
 '
 ```
+
+[1]: https://mesos.apache.org/documentation/attributes-resources/
+[2]: https://mesos.apache.org/blog/slave-recovery-in-apache-mesos/
