@@ -43,6 +43,16 @@ Mesos (distributed system kernel, data center time-sharing)
 
 Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
+High-Availability:
+
+* If the master is unavailable
+  - Existing tasks continue execution
+  - New resources can not be allocated
+* Use multiple Mesos masters:
+  - **Leader**, active master
+  - Backup masters in case of failure
+  - Master **election** with Apache Zookeeper
+
 Frameworks (== pluggable schedulers):
 
 * User-land interface for distributed applications
@@ -53,51 +63,6 @@ Frameworks (== pluggable schedulers):
   - Stateful services (e.g. databases)
   - Periodic (cron like) jobs, (i.e. Chronos, Jenkins)
   - Batch jobs (sequential/parallel)
-
-### Executor
-
-Agents (slaves) launch an executor to run framework tasks:
-
-- Communicates to the agent via HTTP API
-- Can launch multiple tasks
-- Notifies agent about task state, may receive state change from agent
-
-List of executors:
-
-Name                  | Description
-----------------------|--------------------------------------------------------
-command executor      | (legacy v0 API) starting a single task
-docker executor       | launches docker container (instead of a command)
-default executor      | (v1 API) capable of running **pods** (task groups)
-custom executor       | build to handle custom workloads
-
-
-
-### Containerization
-
-* Pluggable architecture (extensible)
-  - Image format
-  - Network
-  - Storage
-  - Isolation
-  - Life-cycle (hooks)
-  - Nested containers
-  - Provisioner (fetch/cache images)
-* **Containerizer** (i.e. docker, cgroups/namespaces, appc, oci)
-  - Between (Mesos) agent and containers
-  - Launch, update, destroy containers
-  - Configures container isolation
-  - Provides container stats and status
-
-### High-Availability
-
-* If the master is unavailable
-  - Existing tasks continue execution
-  - New resources can not be allocated
-* Use multiple Mesos masters:
-  - **Leader**, active master
-  - Backup masters in case of failure
-  - Master **election** with Apache Zookeeper
 
 [1]:  https://mesos.apache.org
 [2]:  https://github.com/apache/mesos

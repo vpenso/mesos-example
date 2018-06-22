@@ -49,17 +49,6 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
 ...Registered with master master@10.1.1.9:5050; given agent ID...
 ```
 
-```bash
-# check the containerizer
-curl -s http://$(vm ip lxb001):$MESOS_SLAVE_PORT/state |\
-        jq '.flags.containerizers'
-# configure the containerizer
-NODES=lxb00[1-4] vn ex '
-        echo mesos,docker > /etc/mesos-slave/containerizers
-        systemctl restart mesos-slave
-'
-```
-
 ### Tasks
 
 Launch tasks from the **Mesos master**:
