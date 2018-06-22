@@ -22,9 +22,21 @@ Also called Mesos **agents**:
 Node specifics advertised to the master by slave resources and slave attributes:
 
 * Resources - CPUs, memory, disks, ports, etc. allocated for frameworks and consumed by a task
-* Attributes - Identify slaves with some information (environement, software, network, etc.) interpreted by frameworks
+* Attributes - Identify slaves with some information (environment, software, network, etc.) interpreted by frameworks
 
 <https://mesos.apache.org/documentation/attributes-resources/>
+
+```
+# pass the configuration as argument 
+mesos-slave \
+        --resources='cpus:24;mem:122880;disk:921600;ports:[21000-29000]' \
+        --attributes='os:centos7;rack:3'
+# or use the corresponding configuration files
+/etc/mesos-slave/resources
+/etc/mesos-slave/attributes
+```
+
+Simple configuration example
 
 ```bash
 # read attributes and resources for a given node from hte HTTP API 
@@ -42,7 +54,7 @@ Node specifics advertised to the master by slave resources and slave attributes:
 }
 # add an attribute to the configuration, and restart the mesos slave
 >>> vm ex lxb001 -r '
-        echo os:centos7 > /etc/mesos-slave/attributes
+        echo "os:centos7;rack:3" > /etc/mesos-slave/attributes
         # delete the latest slave recovery configuration
         rm -rf /var/lib/mesos/meta/slaves/latest
         systemctl restart mesos-slave
@@ -52,11 +64,17 @@ Node specifics advertised to the master by slave resources and slave attributes:
 /usr/sbin/mesos-slave
 	--master=zk://10.1.1.9:2181,10.1.1.10:2181,10.1.1.11:2181/mesos
 	--log_dir=/var/log/mesos
-	--attributes=os:centos7
+	--attributes=os:centos7;rack:3
 	--containerizers=docker,mesos
 	--hostname=10.1.1.15
 	--ip=10.1.1.15
 	--work_dir=/var/lib/mesos
+# read the slave attributes from the HTTP API
+>>> curl -s http://$(vm ip lxb001):$MESOS_SLAVE_PORT/state | jq '.attributes'
+{                                                                            
+  "os": "centos7",
+  "rack": 3
+}
 ```
 
 
