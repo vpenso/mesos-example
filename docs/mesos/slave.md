@@ -101,7 +101,7 @@ NODES=lxb00[1-4] vn ex '
 '
 ```
 
-### Executor
+## Executor
 
 Agents (slaves) launch an executor to run framework tasks:
 
@@ -118,7 +118,11 @@ docker executor       | launches docker container (instead of a command)
 default executor      | (v1 API) capable of running **pods** (task groups)
 custom executor       | build to handle custom workloads
 
-For example, start a simple task and identify the slave node it executes on:
+Custom framework executor can be deployed on demand using [Mesos fetcher][3].
+
+### Default Executor 
+
+Start a simple task and identify the slave node it executes on:
 
 ```bash
 >>> vm lo lxcc01 -r '
@@ -149,6 +153,14 @@ List the process hierarchy on the slave node using the corresponding IP address:
              \_ sleep 5000
 ```
 
+Semantics of the **default executor**:
+
+- Launch nested task container underneath executor container
+- Task & executor container share resources (no isolation between tasks within executor)
+- Non-zero task exit kills task group and shuts down executor
+
+### Docker Executor
+
 Similar task using a Docker container
 
 ```bash
@@ -167,12 +179,8 @@ Similar task using a Docker container
      \_ /usr/bin/docker-current ... busybox:latest -c echo sleep... ; sleep 5000
 ```
 
-Semantics of the default executor:
-
-- Launch nested task container underneath executor container
-- Task & executor container share resources (no isolation between tasks within executor)
-- Non-zero task exit kills task group and shuts down executor
 
 
 [1]: https://mesos.apache.org/documentation/attributes-resources/
 [2]: https://mesos.apache.org/blog/slave-recovery-in-apache-mesos/
+[3]: http://mesos.apache.org/documentation/latest/fetcher/
