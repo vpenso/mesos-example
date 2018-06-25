@@ -14,7 +14,7 @@
 
 Also called Mesos **agents**:
 
-* **Execute tasks** from frameworks using local resources
+* **Launch tasks** from frameworks using local resources
 * Provide resource **isolation** (while running multiple tasks)
 
 ### Resources & Attributes
@@ -167,6 +167,11 @@ Similar task using a Docker container
      \_ /usr/bin/docker-current ... busybox:latest -c echo sleep... ; sleep 5000
 ```
 
+Semantics of the default executor:
+
+- Launch nested task container underneath executor container
+- Task & executor container share resources (no isolation between tasks within executor)
+- Non-zero task exit kills task group and shuts down executor
 
 
 [1]: https://mesos.apache.org/documentation/attributes-resources/

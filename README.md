@@ -54,7 +54,7 @@ $BROWSER http://$(vm ip lxdev01):4400
 
 **Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
 
-## Architecture
+# Mesos
 
 _Mesos is platform to share computing resources between multiple cluster computing frameworks._
 
@@ -71,19 +71,11 @@ _Mesos is platform to share computing resources between multiple cluster computi
 
 Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
+* Min-max fairness algorithm maximizes the minimum resources allocated to a user (1/Nth to each)
+* DRF generalizes the min-max algorithm for multiple resources
 * A dominant resource is the resource a user has biggest share of
 * The dominant share is the fraction of the dominant resource a user has allocated
 * **Schedules tasks to the user with smallest dominant share**
-
-High-available master node, requires [zookeeper][19] (consensus service)
-
-* If the master is unavailable
-  - Existing tasks continue execution
-  - New resources can not be allocated
-* Use multiple Mesos masters:
-  - **Leader**, active master
-  - Backup masters in case of failure
-  - Master **election** with zookeeper
 
 ## Ecosystem
 

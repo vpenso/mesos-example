@@ -37,6 +37,17 @@ curl -s http://$MESOS_MASTER_IP_PORT/state | jq
 curl -s http://$MESOS_MASTER_IP_PORT/master/flags | jq
 ```
 
+High-available master node, requires [zookeeper][1] (consensus service)
+
+* If the master is unavailable
+  - Existing tasks continue execution
+  - New resources can not be allocated
+* Use multiple Mesos masters
+  - Leader, active master
+  - Backup masters in case of failure
+  - Master election with zookeeper
+
+
 ### Agents
 
 ```bash
@@ -54,3 +65,5 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
 -- lxb004 --
 ...Registered with master master@10.1.1.9:5050; given agent ID...
 ```
+
+[1]: ../zookeeper.md

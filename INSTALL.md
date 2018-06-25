@@ -193,7 +193,7 @@ vm ex lxcm01 -r -- salt -E lxb state.apply mesos-slave
 vm ex lxcm01 -r "salt '*' service.status mesos*"
 ```
 
-Cf. [docs/mesos/ops.md][13]
+Cf. [docs/mesos/master.md][13]
 
 ###  Marathon
 
@@ -237,5 +237,5 @@ Cf. [docs/marathon.md][12]
 [10]: srv/salt/sysctl.sls
 [11]: docs/zookeeper.md
 [12]: docs/marathon.md
-[13]: docs/mesos/ops.md
+[13]: docs/mesos/master.md
 [14]: srv/salt/marathon.sls
