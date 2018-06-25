@@ -1,6 +1,5 @@
 # Frameworks
 
-
 Pluggable **application schedulers**:
 
 * User-land interface for distributed applications
@@ -16,3 +15,6 @@ Pluggable **application schedulers**:
 # list frameworks
 cul -s http://$MESOS_MASTER_IP_PORT/frameworks | jq '.frameworks[] | {name,hostname,active}'
 ```
+List of Mesos frameworks: 
+
+<https://mesos.apache.org/documentation/latest/frameworks/>

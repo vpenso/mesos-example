@@ -1,14 +1,13 @@
 
-
-## Operations
+# Mesos Master
 
 <https://mesos.readthedocs.io>
-
-### Master
 
 ```bash
 # open the web GUI in our default browser
 $BROWSER http://$MESOS_MASTER_IP_PORT
+# help pages for the REAT endpoints
+$BROWSER http://$MESOS_MASTER_IP_PORT/help
 # start master daemon in foreground 
 vm ex lxcc01 -r '
         systemctl stop mesos-master
@@ -20,6 +19,13 @@ vm ex lxcc01 -r '
 '
 # force leader election
 vm ex lxcc01 -r 'mesos-resolve $(cat /etc/mesos/zk)'
+```
+
+Open the logger application from the home-page in the left column under "Mater Log: Download | View"
+
+```bash
+# increase the verbosity of the log output for a given duration
+curl "http://$MESOS_MASTER_IP_PORT/logging/toggle?level=3&duration=15mins"
 ```
 
 Status information exposed by the HTTP API

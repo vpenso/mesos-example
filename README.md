@@ -56,7 +56,7 @@ $BROWSER http://$(vm ip lxdev01):4400
 
 ## Architecture
 
- Mesos is platform to share computing resources between multiple cluster computing frameworks.
+_Mesos is platform to share computing resources between multiple cluster computing frameworks._
 
 * Provides a low-level **abstraction of physical resources**
 * Abstracts cores, memory, storage, etc. away from machines (physical and/or virtual)
@@ -94,10 +94,6 @@ High-available master node, requires [zookeeper][19] for service discovery
 - [DC/OS OpenSource][5] available on Github
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible.
-
-Frameworks (application schedulers) build on top of Mesos:
-
-<https://mesos.apache.org/documentation/latest/frameworks/>
 
 Other container orchestration systems:
 
