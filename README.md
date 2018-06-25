@@ -95,11 +95,12 @@ Univa [URB][7] (Universal Resource Broker) is Mesos API compatible.
 
 [MiniMesos][11] is a testing tool for Mesos.
 
-Other Open Source container orchestration systems:
+Other Open-Source **Container Orchestration Engines** (COEs):
 
 - [Kubernetes][8]
-- HashiCorp [Nomad][9]
-- Docker [Swarm][10]
+- [Nomad][9]
+- [Swarm][10]
+- [Kontena][12]
 
 
 [0]:  https://github.com/vpenso/vm-tools
@@ -113,6 +114,7 @@ Other Open Source container orchestration systems:
 [9]:  https://www.nomadproject.io
 [10]: https://docs.docker.com/engine/swarm
 [11]: https://minimesos.org
+[12]: https://github.com/kontena/kontena
 [18]: docs/mesos/master.md
 [19]: docs/zookeeper.md
 [20]: docs/mesos/slave.md
