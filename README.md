@@ -63,7 +63,11 @@ _Mesos is platform to share computing resources between multiple cluster computi
 * Enables **dynamic resource parititoning** (fault-tolerant, elastic distributed systems)
 * Offers resources to computing [frameworks][21] responsible for **workload specific scheduling**
 * **Dispatches tasks** to the resources on [slave][20] nodes, and reallocates these when a previous task ends
-* **Two-level scheduling** separates responsibilities between Mesos and frameworks
+
+**Two-level scheduling** separates responsibilities between Mesos (master) and frameworks:
+
+* Scheduler (master and frameworks) do not have a global knowledge about resource utilization
+* Resource allocation decisions can be non-optimal from a global view
 
 Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
@@ -71,7 +75,7 @@ Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 * The dominant share is the fraction of the dominant resource a user has allocated
 * **Schedules tasks to the user with smallest dominant share**
 
-High-available master node, requires [zookeeper][19] for service discovery
+High-available master node, requires [zookeeper][19] (consensus service)
 
 * If the master is unavailable
   - Existing tasks continue execution
@@ -79,7 +83,7 @@ High-available master node, requires [zookeeper][19] for service discovery
 * Use multiple Mesos masters:
   - **Leader**, active master
   - Backup masters in case of failure
-  - Master **election** with Apache Zookeeper
+  - Master **election** with zookeeper
 
 ## Ecosystem
 
@@ -94,6 +98,8 @@ High-available master node, requires [zookeeper][19] for service discovery
 - [DC/OS OpenSource][5] available on Github
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible.
+
+[MiniMesos][11] is a testing too for Mesos.
 
 Other container orchestration systems:
 
@@ -111,7 +117,8 @@ Other container orchestration systems:
 [7]:  https://github.com/UnivaCorporation/urb-core
 [8]:  https://kubernetes.io
 [9]:  https://www.nomadproject.io
-[10]: https://docs.docker.com/engine/swarm/
+[10]: https://docs.docker.com/engine/swarm
+[11]: https://minimesos.org
 [19]: docs/zookeeper.md
 [20]: docs/mesos/slave.md
 [21]: docs/mesos/framework.md

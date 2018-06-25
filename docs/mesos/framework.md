@@ -1,6 +1,6 @@
 # Frameworks
 
-Pluggable **application schedulers**:
+Framework basically pluggable **application schedulers**:
 
 * User-land interface for distributed applications
 * Receive **resource offers** from Mesos, accept/reject offer, dispatch tasks
@@ -18,3 +18,13 @@ cul -s http://$MESOS_MASTER_IP_PORT/frameworks | jq '.frameworks[] | {name,hostn
 List of Mesos frameworks: 
 
 <https://mesos.apache.org/documentation/latest/frameworks/>
+
+Typical flow of events for a framework:
+
+1. Registers with the master
+2. Continuously receive a resource offer from the master
+3. Accept offer(, or reject the offer)
+4. Send tasks (executors) to the master
+5. Master allocates resources and launches tasks
+6. React to notifications about task complete/failure
+7. Remove registration from the master
