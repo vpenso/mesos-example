@@ -48,10 +48,3 @@ curl -s http://$MESOS_MASTER_IP_PORT/master/state-summary |\
 -- lxb004 --
 ...Registered with master master@10.1.1.9:5050; given agent ID...
 ```
-### Frameworks
-
-```bash
-# list frameworks
-curl -s http://$MESOS_MASTER_IP_PORT/frameworks |\
-        jq '.frameworks[] | {name,hostname,active}'
-```

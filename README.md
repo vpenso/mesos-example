@@ -54,28 +54,16 @@ $BROWSER http://$(vm ip lxdev01):4400
 
 **Find a more comprehensive Mesos Cluster example in [INSTALL.md](INSTALL.md)**
 
-
-
-
 ## Architecture
 
-Mesos allocates resources to frameworks which do workload specific scheduling
+ Mesos is platform to share computing resources between multiple cluster computing frameworks.
 
-* Mesos provides low-level **abstraction of physical resources**
-* **Frameworks** abstract away operational concerns of distributed systems
-* **Tasks** concerned with computation-specific problems
-
-(Application) **Two-level scheduling** separates responsibilities between Mesos and frameworks
-
-Mesos (distributed system kernel, data center time-sharing)
-
-- Enables dynamic **resource parititoning** (fault-tolerant elastic distributed systems)
-- Abstracts CPU, memory, storage(, etc.) away from machines (physical/virtual)
-- Understands primitives of distributed computing, no intelligence on using these efficiently
-- **Master** node (+ standby masters for HA), requires service discovery (e.g. ZooKeeper)
-- **Slave** (agent) nodes (physical resources), advertise available resources/attributes
-- **Offers resources** to frameworks (schedulers)
-- Dispatches tasks to the slave nodes, reallocates when tasks end
+* Provides a low-level **abstraction of physical resources**
+* Abstracts cores, memory, storage, etc. away from machines (physical and/or virtual)
+* Enables **dynamic resource parititoning** (fault-tolerant, elastic distributed systems)
+* Offers resources to computing [frameworks][21] responsible for **workload specific scheduling**
+* **Dispatches tasks** to the resources on [slave][20] nodes, and reallocates these when a previous task ends
+* **Two-level scheduling** separates responsibilities between Mesos and frameworks
 
 Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
@@ -83,7 +71,7 @@ Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 * The dominant share is the fraction of the dominant resource a user has allocated
 * **Schedules tasks to the user with smallest dominant share**
 
-High-Availability:
+High-available master node, requires [zookeeper][19] for service discovery
 
 * If the master is unavailable
   - Existing tasks continue execution
@@ -92,17 +80,6 @@ High-Availability:
   - **Leader**, active master
   - Backup masters in case of failure
   - Master **election** with Apache Zookeeper
-
-**Frameworks** (== pluggable schedulers):
-
-* User-land interface for distributed applications
-* Receive **resource offers** from Mesos, accept/reject offer, dispatch tasks
-* Tell Mesos (kernel) how to run applications
-* Separate schedulers for different **workloads**:
-  - Long running stateless services (i.e. Marathon)
-  - Stateful services (e.g. databases)
-  - Periodic (cron like) jobs, (i.e. Chronos, Jenkins)
-  - Batch jobs (sequential/parallel)
 
 ## Ecosystem
 
@@ -139,6 +116,9 @@ Other container orchestration systems:
 [8]:  https://kubernetes.io
 [9]:  https://www.nomadproject.io
 [10]: https://docs.docker.com/engine/swarm/
+[19]: docs/zookeeper.md
+[20]: docs/mesos/slave.md
+[21]: docs/mesos/framework.md
 
 
 
