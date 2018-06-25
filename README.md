@@ -1,3 +1,5 @@
+The shell **script [source_me.sh](source_me.sh)** adds the tool-chain in this repository to your shell environment.
+
 # Apache Mesos Cluster with SaltStack 
 
 Component     | Description                             | CF.
@@ -61,7 +63,7 @@ _Mesos is platform to share computing resources between multiple cluster computi
 * Provides a low-level **abstraction of physical resources**
 * Abstracts cores, memory, storage, etc. away from machines (physical and/or virtual)
 * Enables **dynamic resource parititoning** (fault-tolerant, elastic distributed systems)
-* Offers resources to computing [frameworks][21] responsible for **workload specific scheduling**
+* The [master][18] offers resources to [frameworks][21] responsible for **workload specific scheduling**
 * **Dispatches tasks** to the resources on [slave][20] nodes, and reallocates these when a previous task ends
 
 **Two-level scheduling** separates responsibilities between Mesos (master) and frameworks:
@@ -91,13 +93,13 @@ Dominant Resource Fairness (DRF) Algorithm (concurrent pessimistic)
 
 Univa [URB][7] (Universal Resource Broker) is Mesos API compatible.
 
-[MiniMesos][11] is a testing too for Mesos.
+[MiniMesos][11] is a testing tool for Mesos.
 
-Other container orchestration systems:
+Other Open Source container orchestration systems:
 
 - [Kubernetes][8]
-- [Nomad][9]
-- [Swarm][10]
+- HashiCorp [Nomad][9]
+- Docker [Swarm][10]
 
 
 [0]:  https://github.com/vpenso/vm-tools
@@ -111,6 +113,7 @@ Other container orchestration systems:
 [9]:  https://www.nomadproject.io
 [10]: https://docs.docker.com/engine/swarm
 [11]: https://minimesos.org
+[18]: docs/mesos/master.md
 [19]: docs/zookeeper.md
 [20]: docs/mesos/slave.md
 [21]: docs/mesos/framework.md

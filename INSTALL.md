@@ -1,7 +1,5 @@
 # High-Available Mesos Cluster
 
-The shell **script [source_me.sh](source_me.sh)** adds the tool-chain in this repository to your shell environment:
-
 List of required virtual machines and services:
 
 Nodes            | Description
